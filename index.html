@@ -1,0 +1,847 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SWMS Technical Summary | Advanced Waste Management</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #F0F4F8; /* Light grey-blue background */
+            color: #1E293B; /* Slate 800 */
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        :root {
+            --ssc-primary: #0052D4; /* Deep Blue */
+            --ssc-secondary: #06D6A0; /* Teal/Green */
+            --ssc-accent: #FFD166; /* Yellow */
+            --ssc-dark: #073B4C; /* Very Dark Blue */
+            --ssc-light: #FFFFFF;
+            --ssc-gray: #F8F9FA;
+            --ssc-light-gray-bg: #F0F4F8;
+        }
+
+        .bg-ssc-primary { background-color: var(--ssc-primary); }
+        .text-ssc-primary { color: var(--ssc-primary); }
+        .border-ssc-primary { border-color: var(--ssc-primary); }
+        .bg-ssc-secondary { background-color: var(--ssc-secondary); }
+        .text-ssc-secondary { color: var(--ssc-secondary); }
+        .bg-ssc-dark { background-color: var(--ssc-dark); }
+        .text-ssc-dark { color: var(--ssc-dark); }
+
+        /* --- Base for Animated Backgrounds --- */
+        body::before { /* Fallback static background if JS/CSS fails */
+            content: '';
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -10;
+            background: var(--ssc-light-gray-bg);
+            overflow: hidden;
+        }
+
+        /* CSS Animated Shapes Layer */
+        .animated-bg-shapes {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -9; /* Behind dynamic image background */
+            overflow: hidden;
+        }
+        .animated-bg-shapes span {
+            position: absolute; display: block; list-style: none;
+            width: 20px; height: 20px;
+            background: rgba(0, 82, 212, 0.05); /* Even more subtle */
+            animation: animateShapes 35s linear infinite; /* Slower animation */
+            bottom: -180px;
+            border-radius: 30%;
+        }
+        .animated-bg-shapes span:nth-child(1) { left: 25%; width: 90px; height: 90px; animation-delay: 0s; background-color: rgba(6, 214, 160, 0.04); animation-duration: 40s;}
+        .animated-bg-shapes span:nth-child(2) { left: 10%; width: 25px; height: 25px; animation-delay: 2s; animation-duration: 20s; }
+        .animated-bg-shapes span:nth-child(3) { left: 70%; width: 30px; height: 30px; animation-delay: 4s; animation-duration: 30s;}
+        .animated-bg-shapes span:nth-child(4) { left: 40%; width: 70px; height: 70px; animation-delay: 0s; animation-duration: 28s; background-color: rgba(255, 209, 102, 0.03); }
+        .animated-bg-shapes span:nth-child(5) { left: 65%; width: 22px; height: 22px; animation-delay: 1s; animation-duration: 33s;}
+        .animated-bg-shapes span:nth-child(6) { left: 75%; width: 120px; height: 120px; animation-delay: 3s; background-color: rgba(0, 82, 212, 0.03); animation-duration: 45s;}
+        .animated-bg-shapes span:nth-child(7) { left: 35%; width: 160px; height: 160px; animation-delay: 7s; background-color: rgba(6, 214, 160, 0.02); animation-duration: 50s;}
+        .animated-bg-shapes span:nth-child(8) { left: 50%; width: 35px; height: 35px; animation-delay: 15s; animation-duration: 55s; }
+        .animated-bg-shapes span:nth-child(9) { left: 20%; width: 18px; height: 18px; animation-delay: 2s; animation-duration: 42s; }
+        .animated-bg-shapes span:nth-child(10) { left: 85%; width: 170px; height: 170px; animation-delay: 0s; animation-duration: 38s; background-color: rgba(255, 209, 102, 0.04); }
+
+        @keyframes animateShapes {
+            0% { transform: translateY(0) rotate(0deg) scale(0.8); opacity: 0.1; border-radius: 20%; }
+            50% { opacity: 0.05; border-radius: 50%; transform: translateY(-50vh) rotate(360deg) scale(1); }
+            100% { transform: translateY(-100vh) rotate(720deg) scale(0.8); opacity: 0.1; border-radius: 20%; }
+        }
+
+        /* Dynamic Image Background Layer (JS controlled) */
+        #background-visuals {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -8; /* Above CSS shapes, behind content */
+            background-size: cover;
+            background-position: center center;
+            background-repeat: no-repeat;
+            transition: background-image 1.2s cubic-bezier(0.4, 0, 0.2, 1), opacity 1.2s ease-in-out; /* Smooth transition */
+            opacity: 0; /* Start transparent, fade in */
+        }
+        #background-visuals.loaded {
+            opacity: 1; /* Fade in when image is loaded */
+        }
+        .loading-indicator-bg { /* For background loading */
+            position: fixed;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: -7; /* Above background-visuals while loading */
+            color: var(--ssc-primary);
+            font-size: 1.5rem;
+            background-color: rgba(255,255,255,0.8);
+            padding: 1rem;
+            border-radius: 0.5rem;
+        }
+        .loading-indicator-text {
+            font-size: 0.875rem; /* text-sm */
+            color: var(--ssc-dark);
+            margin-left: 0.5rem;
+        }
+
+
+        /* --- Header & Navigation --- */
+        header {
+            background-color: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            position: sticky; top: 0; z-index: 50;
+            transition: background-color 0.3s ease;
+        }
+        nav ul li a { position: relative; transition: color 0.3s ease; font-weight: 500; }
+        nav ul li a:hover { color: var(--ssc-primary); }
+        nav ul li a::after { content: ''; position: absolute; width: 0; height: 2px; bottom: -5px; left: 50%; transform: translateX(-50%); background-color: var(--ssc-primary); transition: width 0.3s ease; }
+        nav ul li a:hover::after { width: 100%; }
+        .mobile-menu-button i { transition: transform 0.3s ease; }
+        .mobile-menu-button.open i { transform: rotate(90deg); }
+
+        /* --- Hero Section --- */
+        .hero-section {
+            background: linear-gradient(135deg, var(--ssc-dark) 0%, var(--ssc-primary) 70%, var(--ssc-secondary) 100%);
+            color: var(--ssc-light);
+            min-height: 70vh; display: flex; align-items: center; justify-content: center;
+            text-align: center; position: relative; overflow: hidden;
+        }
+         .hero-content { animation: fadeInFromBottom 1s ease-out forwards; z-index: 1; }
+
+        /* --- Video Background Section Placeholder --- */
+        .video-background-section {
+            position: relative; min-height: 60vh; display: flex; align-items: center; justify-content: center;
+            color: var(--ssc-light); text-align: center; overflow: hidden;
+        }
+        .video-background-section .video-bg-element {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;
+            background-color: var(--ssc-dark); /* Fallback if image/video fails */
+            background-size: cover; background-position: center;
+        }
+        .video-background-section .video-bg-element video { width: 100%; height: 100%; object-fit: cover; }
+        .video-background-section .content-overlay {
+            background-color: rgba(7, 59, 76, 0.6); /* Slightly less opacity */
+            padding: 2rem 1.5rem; border-radius: 0.5rem; z-index: 1; max-width: 90%;
+        }
+
+        /* --- General Section Styling --- */
+        .section-intro-box {
+            max-width: 48rem; /* Increased max-width for wider appeal */
+            margin-left: auto;
+            margin-right: auto;
+            margin-bottom: 2.5rem; /* Consistent bottom margin */
+            padding: 1.5rem 2rem; /* Adjusted padding */
+            background-color: rgba(255, 255, 255, 0.9); /* 90% opacity white */
+            backdrop-filter: blur(4px); /* Subtle blur */
+            border-radius: 0.75rem; /* 12px */
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06); /* Softer shadow */
+            text-align: center;
+        }
+        /* Dark mode for intro box */
+        .dark .section-intro-box {
+            background-color: rgba(30, 41, 59, 0.9); /* slate-800 with 90% opacity */
+        }
+
+        .section-title { font-size: 2.2rem; font-weight: 800; color: var(--ssc-dark); margin-bottom: 0.75rem; text-align: center; }
+        .section-subtitle { font-size: 1.1rem; color: #475569; /* No bottom margin here, handled by wrapper */ text-align: center; max-width: 700px; margin-left: auto; margin-right: auto; }
+        
+        .content-card {
+            background-color: rgba(255, 255, 255, 0.95); /* Slightly transparent cards */
+            backdrop-filter: blur(5px);
+            border-radius: 0.75rem; box-shadow: 0 8px 20px rgba(0,0,0,0.07);
+            transition: transform 0.3s ease, box-shadow 0.3s ease; overflow: hidden;
+        }
+        .content-card:hover { transform: translateY(-8px); box-shadow: 0 12px 25px rgba(0,0,0,0.1); }
+        .feature-icon { font-size: 2.2rem; color: var(--ssc-primary); margin-bottom: 1rem; transition: transform 0.3s ease; }
+        .content-card:hover .feature-icon { transform: scale(1.1); }
+        .tech-stack-table { width: 100%; margin-top: 1.5rem; border-collapse: collapse; }
+        .tech-stack-table th, .tech-stack-table td { padding: 0.75rem 1rem; border: 1px solid #E2E8F0; text-align: left; }
+        .tech-stack-table th { background-color: var(--ssc-gray); font-weight: 600; color: var(--ssc-dark); }
+
+        /* --- GIF Timeline Styling --- */
+        .timeline-gif-container {
+            width: 100%;
+            max-width: 800px; /* Adjust as needed for your GIF's aspect ratio */
+            margin: 2rem auto; /* Centering */
+            padding: 1rem 0;
+            background-color: rgba(255, 255, 255, 0.8); /* Optional: slight bg for the container */
+            border-radius: 0.5rem;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        }
+        .timeline-gif-container img {
+            display: block;
+            width: 100%;
+            height: auto;
+            border-radius: 0.25rem; /* If GIF itself doesn't have rounded corners */
+        }
+
+
+        .btn { padding: 0.75rem 1.5rem; border-radius: 0.5rem; font-weight: 600; transition: all 0.3s ease; display: inline-block; text-align: center; }
+        .btn-primary { background-color: var(--ssc-primary); color: var(--ssc-light); }
+        .btn-primary:hover { background-color: #0041A8; transform: translateY(-2px); box-shadow: 0 4px 10px rgba(0, 82, 212, 0.3); }
+        .btn-secondary { background-color: var(--ssc-secondary); color: var(--ssc-dark); }
+        .btn-secondary:hover { background-color: #05B386; transform: translateY(-2px); box-shadow: 0 4px 10px rgba(6, 214, 160, 0.3); }
+        .btn-ai {
+            background-color: var(--ssc-accent);
+            color: var(--ssc-dark);
+            padding: 0.375rem 0.75rem; /* Smaller button */
+            font-size: 0.75rem; /* Smaller text */
+            border-radius: 0.375rem;
+            margin-left: 0.5rem;
+            transition: background-color 0.2s ease, transform 0.2s ease;
+        }
+        .btn-ai:hover {
+            background-color: #FFC107; /* Darker yellow */
+            transform: translateY(-1px);
+        }
+        .ai-response-box {
+            margin-top: 0.5rem;
+            padding: 0.75rem;
+            background-color: #eef2f9; /* Lighter blue-gray */
+            border-left: 3px solid var(--ssc-secondary);
+            font-size: 0.8rem;
+            color: var(--ssc-dark);
+            border-radius: 0.25rem;
+            line-height: 1.5;
+        }
+
+
+        @keyframes fadeInFromBottom { from { opacity: 0; transform: translateY(50px); } to { opacity: 1; transform: translateY(0); } }
+        .fade-in-section { opacity: 0; transform: translateY(40px); transition: opacity 0.6s ease-out, transform 0.6s ease-out; }
+        .fade-in-section.visible { opacity: 1; transform: translateY(0); }
+        footer { background-color: var(--ssc-dark); color: #CBD5E1; }
+        footer a:hover { color: var(--ssc-secondary); }
+        .social-icon { transition: transform 0.3s ease, color 0.3s ease; }
+        .social-icon:hover { transform: scale(1.2); color: var(--ssc-secondary); }
+
+        @media (max-width: 768px) {
+            .section-title { font-size: 1.8rem; }
+            .hero-section { min-height: 60vh; }
+            .hero-content h1 { font-size: 2.2rem; }
+            .hero-content p { font-size: 0.95rem; }
+            #main-header nav.hidden.md\\:block { display: none; }
+            #mobile-menu ul {
+                position: absolute; top: 100%; left: 0; right: 0;
+                background-color: var(--ssc-light); box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+                flex-direction: column; align-items: stretch; max-height: 0;
+                overflow: hidden; transition: max-height 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+            }
+            #mobile-menu ul.open { max-height: 500px; padding-bottom: 1rem; }
+            #mobile-menu ul li { width: 100%; text-align: center; }
+            #mobile-menu ul li a { padding: 1rem; display: block; border-bottom: 1px solid #e5e7eb; }
+            #mobile-menu ul li a::after { display: none; }
+            .video-background-section .content-overlay { padding: 1.5rem 1rem; }
+        }
+        /* .slide-container removed: was empty and only used for JS targeting */
+    </style>
+</head>
+<body>
+    <div class="animated-bg-shapes"> <span></span><span></span><span></span><span></span><span></span>
+        <span></span><span></span><span></span><span></span><span></span>
+    </div>
+    <div id="background-visuals"></div> <div id="loading-indicator-bg" class="loading-indicator-bg" style="display: none;"><i class="fas fa-spinner fa-spin"></i><span class="loading-indicator-text">Generating Background...</span></div>
+
+    <header id="main-header">
+        <div class="container mx-auto px-6 py-3 flex justify-between items-center">
+            <a href="#home" class="flex items-center">
+                <img src="https://i.imgur.com/0UlqDSN.png" alt="Sustainability Solutions Company Logo" class="h-10 md:h-12 mr-2" id="header-logo"
+                onerror="this.onerror=null; this.src='https://placehold.co/180x50/000000/FFFFFF?text=Logo+Error&font=Inter';"
+                >
+            </a>
+            <nav class="hidden md:block">
+                <ul class="flex space-x-6">
+                    <li><a href="#home" class="text-ssc-dark hover:text-ssc-primary">Home</a></li>
+                    <li><a href="#overview" class="text-ssc-dark hover:text-ssc-primary">Overview</a></li>
+                    <li><a href="#features" class="text-ssc-dark hover:text-ssc-primary">Key Features</a></li>
+                    <li><a href="#automation" class="text-ssc-dark hover:text-ssc-primary">Automation</a></li>
+                    <li><a href="#interfaces" class="text-ssc-dark hover:text-ssc-primary">Interfaces</a></li>
+                    <li><a href="#context" class="text-ssc-dark hover:text-ssc-primary">Context</a></li>
+                </ul>
+            </nav>
+            <div class="md:hidden">
+                <button id="mobile-menu-toggle" class="text-ssc-dark focus:outline-none mobile-menu-button">
+                    <i class="fas fa-bars fa-lg"></i>
+                </button>
+            </div>
+        </div>
+        <nav id="mobile-menu" class="md:hidden">
+            <ul class="flex-col items-center"></ul>
+        </nav>
+    </header>
+
+    <main>
+        <section id="home" class="hero-section slide-container" data-theme="waste-intro">
+            <div class="container mx-auto px-6 hero-content">
+                <h1 class="text-3xl md:text-5xl font-extrabold mb-5 leading-tight">Smart Waste Management System (SWMS)</h1>
+                <p class="text-md md:text-lg mb-8 max-w-2xl mx-auto">
+                    A Visionary, Technology-Driven Platform Automating and Optimizing Construction & Demolition Waste (CDW) Management.
+                </p>
+                <a href="#overview" class="btn btn-primary text-md px-8 py-3">Explore SWMS</a>
+            </div>
+        </section>
+
+        <section id="overview" class="video-background-section fade-in-section slide-container" data-theme="system-overview">
+            <div class="video-bg-element">
+            </div>
+            <div class="container mx-auto px-6 content-overlay">
+                 <div class="section-intro-box !bg-transparent !shadow-none !backdrop-blur-none !p-0 !max-w-full">
+                    <h2 class="text-2xl md:text-4xl font-bold mb-4 text-white">System Introduction</h2>
+                    <p class="text-md md:text-lg mb-6 max-w-3xl mx-auto text-slate-200">
+                        The Smart Waste Management System (SWMS) leverages advanced technology to automate and optimize CDW management. Through robust IoT-driven tracking, intelligent access control, and automated data processing, SWMS supports Saudi Vision 2030 performance and sustainability objectives. Its AI-ready architecture and full source code ownership ensure unparalleled technological control and future adaptability.
+                    </p>
+                </div>
+                <a href="#features" class="btn btn-secondary">Discover Core Features</a>
+            </div>
+        </section>
+
+        <section id="features" class="py-12 md:py-20 bg-ssc-gray fade-in-section slide-container" data-theme="automation-tech">
+            <div class="container mx-auto px-6">
+                <div class="section-intro-box">
+                    <h2 class="section-title">SWMS Key Features & Capabilities</h2>
+                    <p class="section-subtitle !mb-0">
+                        Designed for comprehensive waste management with a focus on automation, efficiency, and technology-driven user empowerment.
+                    </p>
+                </div>
+                <div class="space-y-12">
+                    <div class="content-card p-6 md:p-8">
+                        <h3 class="text-xl font-semibold text-ssc-dark mb-4"><i class="fas fa-puzzle-piece text-ssc-primary mr-2"></i>Operational Challenges Addressed by Technology</h3>
+                        <div class="grid md:grid-cols-2 gap-6 text-sm">
+                            <div>
+                                <strong class="text-ssc-dark block mb-1">Manual Vehicle Entry/Weighing:</strong>
+                                <p class="text-slate-600 leading-relaxed">Traditional methods increase risk of data inaccuracy and operational delays.</p>
+                                <strong class="text-ssc-secondary block mt-2 mb-1">SWMS Automated Solution:</strong>
+                                <p class="text-slate-600 leading-relaxed">LPR+RFID based automated access gates. Realtime weight logging via integrated Weigh indicators for precise data capture.</p>
+                            </div>
+                            <div>
+                                <strong class="text-ssc-dark block mb-1">Inefficient Data Management & Reporting:</strong>
+                                <p class="text-slate-600 leading-relaxed">Delays in reporting and cumbersome record-keeping hinder timely decision-making.</p>
+                                <strong class="text-ssc-secondary block mt-2 mb-1">SWMS Technology-Driven Solution:</strong>
+                                <p class="text-slate-600 leading-relaxed">Admin/contractor portals for real-time operational oversight. Multilanguage dashboards powered by an automated data processing and reporting engine.</p>
+                            </div>
+                            <div>
+                                <strong class="text-ssc-dark block mb-1">Fragmented Systems & Processes:</strong>
+                                <p class="text-slate-600 leading-relaxed">Disparate systems across hardware and manual processes create operational silos.</p>
+                                <strong class="text-ssc-secondary block mt-2 mb-1">SWMS Integrated Solution:</strong>
+                                <p class="text-slate-600 leading-relaxed">Robust API integration with key stakeholders (e.g., Madinati platform, Google Maps, SMS Gateways) for unified, technology-driven operations.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="content-card p-6 md:p-8">
+                        <h3 class="text-xl font-semibold text-ssc-dark mb-4"><i class="fas fa-cogs text-ssc-primary mr-2"></i>Core System Features</h3>
+                        <ul class="grid md:grid-cols-2 gap-x-8 gap-y-4 list-disc list-inside text-slate-600 text-sm leading-relaxed">
+                            <li><strong>Secure Access Control:</strong> Role-based login with Two-Factor Authentication (2FA) technology.</li>
+                            <li><strong>Automated Vehicle Verification:</strong> LPR triggered barrier access for preregistered vehicles, enhancing security and speed.</li>
+                            <li><strong>Smart Weighing Technology:</strong> Automated entry/exit weight capture using digital scale indicators for precise net waste calculation.</li>
+                            <li><strong>Live Operational Dashboard:</strong> Realtime statistics on vehicle entries, tonnage, and geographical activity heatmaps via advanced visualization tools.</li>
+                            <li><strong>Automated Reporting Engine:</strong> Autogenerated daily & custom reports (e.g., Manifestation, proforma invoices) for Stakeholders & Clients, reducing manual effort.</li>
+                            <li><strong>Integrated Device Ecosystem:</strong> LPR cameras, weighbridges, and smart gates with full API control for seamless, automated operation.</li>
+                            <li><strong>Proactive Alerts System:</strong> Automated notifications for operational anomalies, vehicle overloading, or missed dumping events.</li>
+                            <li><strong>Advanced GIS Mapping & AVL:</strong> Neighborhood level tracking and Automated Vehicle Location (AVL) overlay for efficient fleet management and route optimization.</li>
+                            <li><strong>Predictive Device Health Monitoring:</strong> Technology-driven maintenance schedules & sensor status tracking, future-ready for AI-powered predictive maintenance.</li>
+                            <li><strong>Automated Inventory Management:</strong> Sales feature tracking storage levels and all material transactions with real-time updates.</li>
+                            <li><strong>Streamlined Vehicle Registration:</strong> Efficient digital process for adding and managing fleet vehicles within the system.</li>
+                            <li><strong>Integrated Digital Wallets:</strong> For seamless financial transactions and automated fee management, enhancing transparency.</li>
+                            <li><strong>Dual-Portal Architecture:</strong> Dedicated web portals for internal staff (Admin, Operator) and external contractors, built on modern frontend technologies.</li>
+                            <li><strong>Automated Data Exchange & System Integrity:</strong> Technology-driven data synchronization (e.g., with platforms like Madinati.sa), immutable audit logs for verifiable data accuracy and system reliability, with multilingual support for diverse user engagement.</li>
+                        </ul>
+                    </div>
+
+                    <div class="content-card p-6 md:p-8">
+                        <h3 class="text-xl font-semibold text-ssc-dark mb-4"><i class="fas fa-code text-ssc-primary mr-2"></i>Technology Stack</h3>
+                        <div class="overflow-x-auto">
+                            <table class="tech-stack-table text-sm">
+                                <thead><tr><th>Layer</th><th>Technologies</th></tr></thead>
+                                <tbody>
+                                    <tr><td>Frontend</td><td>Angular (Admin), Next.js (Contractor), Grafana (Dashboards)</td></tr>
+                                    <tr><td>Backend</td><td>.NET Core (RESTful APIs), PostgreSQL (ACID-compliant database)</td></tr>
+                                    <tr><td>IoT Integration</td><td>HTTPS/REST, Modbus, Serial for weighbridges, LPR, RFID, barriers</td></tr>
+                                    <tr><td>Security</td><td>OAuth2/JWT, MFA, Adherence to OWASP Top 10, TLS/HTTPS encryption</td></tr>
+                                    <tr><td>Deployment</td><td>Docker, Kubernetes, Windows/Linux Servers, Terraform/Ansible</td></tr>
+                                    <tr><td>Monitoring</td><td>Prometheus, ELK Stack, Grafana</td></tr>
+                                    <tr><td>DevOps</td><td>GitLab CI/CD, Infrastructure-as-Code, Microservices Architecture</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                     <div class="content-card p-6 md:p-8">
+                        <h3 class="text-xl font-semibold text-ssc-dark mb-4"><i class="fas fa-dollar-sign text-ssc-primary mr-2"></i>Financial & Operational Benefits through Technology</h3>
+                        <ul class="list-disc text-slate-600 space-y-2 text-sm leading-relaxed">
+                            <li>
+                                <strong>Labor Cost Optimization:</strong> Automation in data capture & error reduction minimizes manual staff hours & audit requirements.
+                                <button class="btn-ai benefit-elaboration-btn">✨ Elaborate (AI)</button>
+                                <div class="ai-response-box hidden"></div>
+                            </li>
+                            <li>
+                                <strong>Enhanced Resource Utilization:</strong> Realtime routing & faster truck turnaround, driven by data analytics, lower fuel consumption & defer fleet expansion needs.
+                                <button class="btn-ai benefit-elaboration-btn">✨ Elaborate (AI)</button>
+                                <div class="ai-response-box hidden"></div>
+                            </li>
+                            <li>
+                                <strong>Optimized Gate Fee Revenue:</strong> Digital wallets & automated enforcement of per-ton/gate passing fees reduce billing disputes and improve collection efficiency.
+                                <button class="btn-ai benefit-elaboration-btn">✨ Elaborate (AI)</button>
+                                <div class="ai-response-box hidden"></div>
+                            </li>
+                            <li>
+                                <strong>Data-Driven Decision Support:</strong> On-demand dashboards & KPI insights enable optimized routes & improved contractor performance monitoring.
+                                <button class="btn-ai benefit-elaboration-btn">✨ Elaborate (AI)</button>
+                                <div class="ai-response-box hidden"></div>
+                            </li>
+                            <li>
+                                <strong>New Revenue Opportunities:</strong> Technology-enhanced recyclables tracking & diversion metrics support performance-based grants & material sales.
+                                <button class="btn-ai benefit-elaboration-btn">✨ Elaborate (AI)</button>
+                                <div class="ai-response-box hidden"></div>
+                            </li>
+                            <li>
+                                <strong>Technology Independence & Cost Control:</strong> Full code ownership and open-source stack eliminate recurring licensing fees (projected saving ~SAR 1.5 million/year baseline) and vendor lock-in.
+                                <button class="btn-ai benefit-elaboration-btn">✨ Elaborate (AI)</button>
+                                <div class="ai-response-box hidden"></div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="automation" class="py-12 md:py-20 fade-in-section slide-container" data-theme="automation-tech">
+            <div class="container mx-auto px-6">
+                <div class="section-intro-box">
+                    <h2 class="section-title">System Automation Flow</h2>
+                    <p class="section-subtitle !mb-0">Illustrating the seamless, automated journey from vehicle entry to data processing within the SWMS.</p>
+                </div>
+                <div class="grid md:grid-cols-2 lg:grid-cols-5 gap-6 text-center">
+                    <div class="content-card p-4 transform hover:scale-105 transition-transform">
+                        <i class="fas fa-id-card-alt fa-2x text-ssc-primary mb-3"></i>
+                        <h4 class="font-semibold text-ssc-dark mb-1">1. LPR Gate Entry</h4>
+                        <p class="text-xs text-slate-500">Automated vehicle identification and entry via License Plate Recognition.</p>
+                    </div>
+                    <div class="content-card p-4 transform hover:scale-105 transition-transform">
+                        <i class="fas fa-balance-scale-right fa-2x text-ssc-primary mb-3"></i>
+                        <h4 class="font-semibold text-ssc-dark mb-1">2. Automatic Weighing</h4>
+                        <p class="text-xs text-slate-500">Automated weigh-in/out with integrated image capture functionality.</p>
+                    </div>
+                    <div class="content-card p-4 transform hover:scale-105 transition-transform">
+                        <i class="fas fa-mobile-alt fa-2x text-ssc-primary mb-3"></i>
+                        <h4 class="font-semibold text-ssc-dark mb-1">3. Instant APP Alerts</h4>
+                        <p class="text-xs text-slate-500">Contractors receive automated APP notifications upon trip completion.</p>
+                    </div>
+                    <div class="content-card p-4 transform hover:scale-105 transition-transform">
+                        <i class="fas fa-flag fa-2x text-ssc-primary mb-3"></i>
+                        <h4 class="font-semibold text-ssc-dark mb-1">4. Anomaly Detection</h4>
+                        <p class="text-xs text-slate-500">System flags abnormal weights or unauthorized entry attempts.</p>
+                        <button id="explain-anomaly-btn" class="btn-ai mt-2">✨ Explain Potential Anomaly (AI)</button>
+                    </div>
+                    <div class="content-card p-4 transform hover:scale-105 transition-transform">
+                        <i class="fas fa-shield-alt fa-2x text-ssc-primary mb-3"></i>
+                        <h4 class="font-semibold text-ssc-dark mb-1">5. Resilient System Design</h4>
+                        <p class="text-xs text-slate-500">System designed for high availability and recovers automatically from hardware failovers.</p>
+                    </div>
+                </div>
+                <div id="anomaly-explanation-box" class="ai-response-box hidden mt-6 max-w-xl mx-auto"></div>
+            </div>
+        </section>
+
+        <section id="timeline" class="py-12 md:py-20 bg-ssc-gray fade-in-section slide-container" data-theme="case-study">
+            <div class="container mx-auto px-6">
+                <div class="section-intro-box">
+                    <h2 class="section-title">Project Implementation Timeline</h2>
+                    <p class="section-subtitle !mb-0">A structured, technology-led phased approach ensures efficient SWMS deployment, seamless system integration, and rapid operational readiness (Total: 13 Weeks).</p>
+                </div>
+                <div class="timeline-gif-container">
+                    <img src="https://i.imgur.com/ZlOXVV1.gif" 
+                        alt="Project Implementation Timeline GIF"
+                        onerror="this.onerror=null; this.src='https://i.imgur.com/ZlOXVV1.gif';"
+                    >
+                </div>
+                </div>
+        </section>
+
+
+        <section id="interfaces" class="py-12 md:py-20 fade-in-section slide-container" data-theme="system-overview">
+            <div class="container mx-auto px-6">
+                 <div class="section-intro-box">
+                    <h2 class="section-title">Platform Interfaces & User Experience</h2>
+                    <p class="section-subtitle !mb-0">
+                        Explore the intuitive and role-specific portals designed for seamless interaction and operational control.
+                    </p>
+                </div>
+                <div class="grid md:grid-cols-2 gap-8">
+                    <div class="content-card p-6 md:p-8 text-center">
+                        <i class="fas fa-user-shield feature-icon"></i>
+                        <h3 class="text-xl font-semibold text-ssc-dark mb-3">Admin & Operational Portal</h3>
+                        <p class="text-slate-600 text-sm mb-6 leading-relaxed">
+                            A comprehensive command center for administrators and operators to manage sites, monitor real-time operations, access critical data analytics, and oversee system performance.
+                        </p>
+                        <a href="admin.html" target="_blank" class="btn btn-primary">View Admin UI Demo</a>
+                    </div>
+                    <div class="content-card p-6 md:p-8 text-center">
+                        <i class="fas fa-truck-fast feature-icon"></i>
+                        <h3 class="text-xl font-semibold text-ssc-dark mb-3">Contractor Self-Service Portal</h3>
+                        <p class="text-slate-600 text-sm mb-6 leading-relaxed">
+                            Empowering waste management contractors with user-friendly tools for self-service onboarding, digital wallet management, detailed trip history tracking, and integrated support channels.
+                        </p>
+                        <a href="Contractor Portal.html" target="_blank" class="btn btn-primary">View Contractor UI Demo</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="context" class="py-12 md:py-20 bg-ssc-gray fade-in-section slide-container" data-theme="future-vision">
+            <div class="container mx-auto px-6">
+                <div class="section-intro-box">
+                    <h2 class="section-title">Technical Context & Strategic Advantages</h2>
+                    <p class="section-subtitle !mb-0">
+                        SWMS leverages cutting-edge technology, offering significant operational and financial advantages over traditional systems.
+                    </p>
+                </div>
+                <div class="grid md:grid-cols-2 gap-8">
+                    <div class="content-card p-6 md:p-8">
+                        <i class="fas fa-industry feature-icon text-center block"></i>
+                        <h3 class="text-xl font-semibold text-ssc-dark mb-3 text-center">Industry Trends & Technology Integration</h3>
+                        <p class="text-slate-600 text-sm mb-6 leading-relaxed text-center">
+                            Dive deeper into the technological advancements shaping smart waste management and how SWMS incorporates these innovations for optimal, future-ready performance.
+                        </p>
+                        <div class="text-center">
+                            <a href="SWMS Industry Trends & Technology.html" target="_blank" class="btn btn-secondary">Explore Tech Trends</a>
+                        </div>
+                    </div>
+                    <div class="content-card p-6 md:p-8">
+                        <i class="fas fa-balance-scale feature-icon text-center block"></i>
+                        <h3 class="text-xl font-semibold text-ssc-dark mb-3 text-center">Executive Platform Comparison</h3>
+                        <p class="text-slate-600 text-sm mb-6 leading-relaxed text-center">
+                            Review a detailed comparison highlighting the clear financial and operational benefits of SWMS, showcasing its superior value proposition and strategic alignment with modern business needs.
+                        </p>
+                        <div class="text-center">
+                           <a href="Executive Comparison.html" target="_blank" class="btn btn-secondary">View Comparison</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="py-10 md:py-12">
+        <div class="container mx-auto px-6 text-center">
+            <img src="https://i.imgur.com/9wKNSTU.png" alt="Sustainability Solutions Company Logo" class="h-12 mx-auto mb-4"
+            onerror="this.onerror=null; this.src='https://placehold.co/180x50/000000/FFFFFF?text=Logo+Error&font=Inter';"
+            >
+            <p class="mb-4 text-xs">
+                Sustainability Solutions Company (ssc.sa) - Pioneering Smart Waste Management.
+            </p>
+            <div class="flex justify-center space-x-5 mb-6">
+                <a href="#" aria-label="Twitter" class="social-icon text-lg"><i class="fab fa-twitter"></i></a>
+                <a href="#" aria-label="LinkedIn" class="social-icon text-lg"><i class="fab fa-linkedin-in"></i></a>
+            </div>
+            <p class="text-xs text-slate-400">
+                &copy; <span id="currentYear"></span> SWMS Technical Summary. All Rights Reserved.
+            </p>
+        </div>
+    </footer>
+
+    <script>
+        // --- Slides Data for Backgrounds ---
+        const slidesData = [
+            { id: "home", backgroundTheme: "waste-intro", title: "SWMS Introduction" },
+            { id: "overview", backgroundTheme: "system-overview", title: "System Overview" },
+            { id: "features", backgroundTheme: "automation-tech", title: "Key Features" },
+            { id: "automation", backgroundTheme: "automation-tech", title: "System Automation Flow" },
+            { id: "timeline", backgroundTheme: "case-study", title: "Implementation Timeline" },
+            { id: "interfaces", backgroundTheme: "system-overview", title: "Platform Interfaces" },
+            { id: "context", backgroundTheme: "future-vision", title: "Technical Context" }
+        ];
+
+        const backgroundVisuals = document.getElementById('background-visuals');
+        const loadingIndicatorBg = document.getElementById('loading-indicator-bg');
+
+        const themePrompts = {
+            "waste-intro": "Abstract modern recycling facility with green energy elements, subtle digital overlay, clean lines, futuristic, sustainable waste management concept, high resolution, executive style, dominant colors #0052D4 and #06D6A0.",
+            "system-overview": "Abstract digital network with interconnected nodes representing data flow, smart technology, automation, cloud computing, clean tech aesthetic, high resolution, executive style, dominant colors #073B4C and #0052D4.",
+            "automation-tech": "Abstract digital circuit board pattern, data lines, glowing elements, representing automation and efficiency, clean, high resolution, executive style, dominant colors #0052D4 and #FFD166.",
+            "financial-benefits": "Abstract financial growth visualization, upward trending graphs, subtle money symbols, positive economic indicators, clean, professional, high resolution, executive style, dominant colors #06D6A0 and #FFD166.",
+            "case-study": "Abstract infographic showing data metrics, timelines, project phases, success indicators, clean, modern, high resolution, executive style, dominant colors #0052D4 and #06D6A0, with a hint of #FFD166.",
+            "future-vision": "Abstract futuristic cityscape with sustainable elements, clean energy, innovation, forward movement, vision 2030 concept, high resolution, executive style, dominant colors #073B4C, #0052D4, and #06D6A0."
+        };
+
+        const generatedBackgroundUrls = {};
+
+        async function generateBackgroundImage(prompt, themeKey) {
+            if (generatedBackgroundUrls[themeKey]) {
+                return generatedBackgroundUrls[themeKey];
+            }
+            if (loadingIndicatorBg) loadingIndicatorBg.style.display = 'flex'; // Use flex to center icon and text
+            if(backgroundVisuals) backgroundVisuals.classList.remove('loaded');
+
+            try {
+                const payload = { instances: [{ prompt: prompt }], parameters: { "sampleCount": 1 } };
+                const apiKey = "AIzaSyBUeakcTtKZLMqhDcjDU2q-LDKZnGln--w"; // Provided by Canvas
+                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/imagen-3.0-generate-002:predict?key=${apiKey}`;
+                
+                console.log(`Generating background image for theme: ${themeKey}`);
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    console.error(`API call failed for ${themeKey} with status ${response.status}: ${errorText}`);
+                    throw new Error(`API call failed with status ${response.status}`);
+                }
+                const result = await response.json();
+
+                if (result.predictions && result.predictions.length > 0 && result.predictions[0].bytesBase64Encoded) {
+                    const imageUrl = `data:image/png;base64,${result.predictions[0].bytesBase64Encoded}`;
+                    generatedBackgroundUrls[themeKey] = imageUrl;
+                    return imageUrl;
+                } else {
+                    console.error("Background image generation failed: Unexpected response structure.", result);
+                    return `https://placehold.co/1920x1080/CCCCCC/333333?text=Error+Generating+${themeKey.replace("-","+")}`;
+                }
+            } catch (error) {
+                console.error(`Error generating background image for ${themeKey}:`, error);
+                return `https://placehold.co/1920x1080/777777/FFFFFF?text=Load+Error+${themeKey.replace("-","+")}`;
+            } finally {
+                 if (loadingIndicatorBg) loadingIndicatorBg.style.display = 'none';
+            }
+        }
+        
+        // --- Function to call Gemini API for text generation ---
+        async function callGeminiApiForText(prompt) {
+            let chatHistory = [{ role: "user", parts: [{ text: prompt }] }];
+            const payload = { contents: chatHistory };
+            const apiKey = "AIzaSyBUeakcTtKZLMqhDcjDU2q-LDKZnGln--w"; // Provided by Canvas
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+
+            try {
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    console.error("Gemini Text API Error:", errorData);
+                    return `Error: ${errorData.error?.message || response.statusText}`;
+                }
+                const result = await response.json();
+                if (result.candidates && result.candidates.length > 0 &&
+                    result.candidates[0].content && result.candidates[0].content.parts &&
+                    result.candidates[0].content.parts.length > 0) {
+                    return result.candidates[0].content.parts[0].text;
+                } else {
+                    console.error("Unexpected Gemini Text API response structure:", result);
+                    return "No content received from AI.";
+                }
+            } catch (error) {
+                console.error("Fetch error for Gemini Text API:", error);
+                return "Failed to fetch response from AI.";
+            }
+        }
+
+
+        let currentTheme = null;
+        let isBgLoading = false;
+        const sectionIntersectionObserver = new IntersectionObserver(async (entries) => {
+            for (const entry of entries) {
+                if (entry.isIntersecting && !isBgLoading) {
+                    const newTheme = entry.target.getAttribute('data-theme');
+                    if (newTheme && themePrompts[newTheme] && newTheme !== currentTheme) {
+                        isBgLoading = true;
+                        currentTheme = newTheme;
+                        if (loadingIndicatorBg) loadingIndicatorBg.style.display = 'flex';
+                        if(backgroundVisuals) backgroundVisuals.classList.remove('loaded');
+
+                        const imageUrl = await generateBackgroundImage(themePrompts[currentTheme], currentTheme);
+                        const img = new Image();
+                        img.onload = () => {
+                            if(backgroundVisuals) {
+                                backgroundVisuals.style.backgroundImage = `url('${imageUrl}')`;
+                                backgroundVisuals.classList.add('loaded');
+                            }
+                            isBgLoading = false;
+                        };
+                        img.onerror = () => {
+                            console.error(`Failed to preload image for theme: ${newTheme}`);
+                            if(backgroundVisuals) {
+                                backgroundVisuals.style.backgroundImage = `url('https://placehold.co/1920x1080/333333/FFFFFF?text=SSC')`;
+                                backgroundVisuals.classList.add('loaded');
+                            }
+                            isBgLoading = false;
+                        };
+                        img.src = imageUrl;
+                        break;
+                    } else if (newTheme && !themePrompts[newTheme]) {
+                        console.warn(`Theme prompt for "${newTheme}" not found.`);
+                         isBgLoading = false; // Ensure loading is reset if prompt is missing
+                    }
+                }
+            }
+        }, { root: null, rootMargin: '0px', threshold: 0.4 });
+
+        document.querySelectorAll('.slide-container').forEach(slideEl => {
+            sectionIntersectionObserver.observe(slideEl);
+        });
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            const firstSlide = slidesData.find(slide => document.getElementById(slide.id));
+            if (firstSlide && themePrompts[firstSlide.backgroundTheme]) {
+                isBgLoading = true;
+                currentTheme = firstSlide.backgroundTheme;
+                if (loadingIndicatorBg) loadingIndicatorBg.style.display = 'flex';
+                 if(backgroundVisuals) backgroundVisuals.classList.remove('loaded');
+
+                const initialImageUrl = await generateBackgroundImage(themePrompts[currentTheme], currentTheme);
+                const img = new Image();
+                img.onload = () => {
+                    if(backgroundVisuals) {
+                        backgroundVisuals.style.backgroundImage = `url('${initialImageUrl}')`;
+                        backgroundVisuals.classList.add('loaded');
+                    }
+                    isBgLoading = false;
+                };
+                img.onerror = () => {
+                    console.error(`Failed to preload initial image for theme: ${currentTheme}`);
+                     if(backgroundVisuals) {
+                        backgroundVisuals.style.backgroundImage = `url('https://placehold.co/1920x1080/333333/FFFFFF?text=SSC')`;
+                        backgroundVisuals.classList.add('loaded');
+                     }
+                    isBgLoading = false;
+                };
+                img.src = initialImageUrl;
+            } else {
+                console.log("No initial slide or theme prompt found for initial background load.");
+                 if(backgroundVisuals) {
+                    backgroundVisuals.style.backgroundImage = `url('https://placehold.co/1920x1080/073B4C/FFFFFF?text=SWMS+Technical+Summary&font=inter')`;
+                    backgroundVisuals.classList.add('loaded');
+                 }
+            }
+
+            const mobileMenuToggle = document.getElementById('mobile-menu-toggle');
+            const mobileMenuNav = document.getElementById('mobile-menu');
+            const desktopNavUl = document.querySelector('#main-header nav.hidden.md\\:block ul');
+            if (mobileMenuToggle && mobileMenuNav && desktopNavUl) {
+                const mobileMenuUl = mobileMenuNav.querySelector('ul');
+                mobileMenuUl.innerHTML = desktopNavUl.innerHTML;
+                mobileMenuToggle.addEventListener('click', () => {
+                    mobileMenuUl.classList.toggle('open');
+                    mobileMenuToggle.classList.toggle('open');
+                });
+                mobileMenuUl.querySelectorAll('a').forEach(link => {
+                    link.addEventListener('click', () => {
+                        mobileMenuUl.classList.remove('open');
+                        mobileMenuToggle.classList.remove('open');
+                    });
+                });
+            }
+
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const targetId = this.getAttribute('href');
+                    const targetElement = document.querySelector(targetId);
+                    if (targetElement) {
+                        const headerOffset = document.getElementById('main-header').offsetHeight;
+                        const elementPosition = targetElement.getBoundingClientRect().top;
+                        const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+                        window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
+                    }
+                });
+            });
+
+            document.getElementById('currentYear').textContent = new Date().getFullYear();
+
+            const animatedFadeInElements = document.querySelectorAll('.fade-in-section, .animate-on-scroll');
+            const fadeInObserverOptions = { root: null, rootMargin: '0px', threshold: 0.1 };
+            const fadeInObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                        entry.target.style.opacity = '1';
+                        entry.target.style.transform = 'translateY(0)';
+                    }
+                });
+            }, fadeInObserverOptions);
+            animatedFadeInElements.forEach(el => {
+                if (!el.classList.contains('fade-in-section')) {
+                     el.style.opacity = '0';
+                     el.style.transform = 'translateY(30px)';
+                     el.style.transition = 'opacity 0.6s ease-out, transform 0.6s ease-out';
+                }
+                fadeInObserver.observe(el);
+            });
+
+            const header = document.getElementById('main-header');
+            window.addEventListener('scroll', () => {
+                if (window.scrollY > 30) {
+                    header.classList.add('shadow-lg');
+                } else {
+                    header.classList.remove('shadow-lg');
+                }
+            });
+            
+            // --- AI Feature: Explain Anomaly ---
+            const explainAnomalyBtn = document.getElementById('explain-anomaly-btn');
+            const anomalyExplanationBox = document.getElementById('anomaly-explanation-box');
+
+            if (explainAnomalyBtn && anomalyExplanationBox) {
+                explainAnomalyBtn.addEventListener('click', async () => {
+                    anomalyExplanationBox.classList.remove('hidden');
+                    anomalyExplanationBox.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Thinking...';
+                    
+                    // Example anomaly scenario
+                    const anomalyPrompt = "A waste collection truck, expected to weigh 5 tons upon entry to a facility, recorded a weight of 8 tons. This is flagged as a significant anomaly. Provide two plausible reasons for this discrepancy and suggest one immediate verification step an operator should take. Keep the explanation concise and actionable for an operator.";
+                    
+                    const explanation = await callGeminiApiForText(anomalyPrompt);
+                    anomalyExplanationBox.innerHTML = explanation.replace(/\n/g, '<br>');
+                });
+            }
+
+            // --- AI Feature: Elaborate on Benefits ---
+            const benefitButtons = document.querySelectorAll('.benefit-elaboration-btn');
+            benefitButtons.forEach(button => {
+                button.addEventListener('click', async () => {
+                    const benefitListItem = button.closest('li');
+                    const benefitText = benefitListItem.childNodes[0].nodeValue.trim(); // Get the text part of the li
+                    const responseBox = benefitListItem.querySelector('.ai-response-box');
+
+                    if (responseBox) {
+                        responseBox.classList.remove('hidden');
+                        responseBox.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Elaborating...';
+
+                        const elaborationPrompt = `Concisely elaborate (2-3 sentences) on the following benefit of a Smart Waste Management System: "${benefitText}". Focus on how technology or automation enables this benefit.`;
+                        const elaboration = await callGeminiApiForText(elaborationPrompt);
+                        responseBox.innerHTML = elaboration.replace(/\n/g, '<br>');
+                    }
+                });
+            });
+
+        });
+    </script>
+</body>
+</html>

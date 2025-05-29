@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="en" class=""> 
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SWMS Internal - Operational Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@emran-alhaddad/saudi-riyal-font/index.css">
+    <style>
+        :root {
+            --color-coral: #FF6B6B;
+            --color-yellow: #FFD166;
+            --color-green-teal: #06D6A0;
+            --color-blue: #118AB2;
+            --color-dark-blue: #073B4C;
+            --color-white: #FFFFFF;
+            --color-light-gray: #F7FAFC; 
+            --color-medium-gray: #E2E8F0;
+            --color-dark-gray: #4A5568;   
+            --color-border-light: #E2E8F0;
+            --color-border-dark: #4A5568;
+
+            /* Light Mode Defaults */
+            --bg-body: #F0F4F8;
+            --bg-sidebar: var(--color-dark-blue);
+            --text-sidebar: var(--color-light-gray);
+            --hover-bg-sidebar: var(--color-blue);
+            --active-bg-sidebar: var(--color-green-teal);
+            --text-active-sidebar: var(--color-dark-blue);
+            --bg-card: var(--color-white);
+            --text-primary: var(--color-dark-blue);
+            --text-secondary: var(--color-dark-gray);
+            --text-header: var(--color-dark-gray);
+            --bg-header: var(--color-white);
+            --shadow-header: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+            --border-color: var(--color-border-light);
+            --table-header-bg: #F8FAFC;
+            --chart-grid-color: var(--color-border-light);
+            --chart-tick-color: var(--color-dark-gray);
+        }
+
+        html.dark {
+            --bg-body: #1A202C; 
+            --bg-sidebar: #ffffff; 
+            --text-sidebar: #12325c; 
+            --hover-bg-sidebar: #073B4C; 
+            --active-bg-sidebar: var(--color-green-teal);
+            --text-active-sidebar: var(--color-dark-blue);
+            --bg-card: #2D3748; 
+            --text-primary: var(--color-light-gray);
+            --text-secondary: #A0AEC0; 
+            --text-header: var(--color-light-gray);
+            --bg-header: #2D3748; 
+            --shadow-header: 0 1px 3px 0 rgba(0, 0, 0, 0.2), 0 1px 2px 0 rgba(0, 0, 0, 0.1);
+            --border-color: var(--color-border-dark);
+            --table-header-bg: #1A202C; 
+            --chart-grid-color: var(--color-border-dark);
+            --chart-tick-color: var(--color-light-gray);
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-body);
+            color: var(--text-secondary);
+            transition: background-color 0.3s, color 0.3s;
+        }
+        
+        .sidebar {
+            background-color: var(--bg-sidebar);
+            color: var(--text-sidebar);
+        }
+        .sidebar a {
+            color: var(--text-sidebar);
+            transition: background-color 0.2s, color 0.2s;
+        }
+        .sidebar a:hover {
+            background-color: var(--hover-bg-sidebar);
+            color: var(--color-white);
+        }
+        .sidebar a.active {
+            background-color: var(--active-bg-sidebar);
+            color: var(--text-active-sidebar);
+            font-weight: 600;
+        }
+        .card {
+            background-color: var(--bg-card);
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            transition: background-color 0.3s;
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            height: 250px; 
+        }
+        .table th, .table td {
+            padding: 0.75rem 1rem;
+            border-bottom: 1px solid var(--border-color);
+            text-align: left;
+        }
+        .table th {
+            background-color: var(--table-header-bg);
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+        .table td {
+            color: var(--text-secondary);
+        }
+        .badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        .badge-red { background-color: var(--color-coral); color: var(--color-white); }
+        .badge-yellow { background-color: var(--color-yellow); color: var(--color-dark-blue); }
+        .badge-green { background-color: var(--color-green-teal); color: var(--color-dark-blue); }
+        .badge-blue { background-color: var(--color-blue); color: var(--color-white); }
+        .stat-icon {
+            font-size: 1.75rem;
+            padding: 0.75rem;
+            border-radius: 0.5rem;
+        }
+        .top-bar {
+            background-color: var(--bg-header);
+            box-shadow: var(--shadow-header);
+            transition: background-color 0.3s;
+        }
+        .top-bar-text {
+            color: var(--text-header);
+        }
+        .primary-text-color { color: var(--text-primary); }
+        .secondary-text-color { color: var(--text-secondary); }
+    </style>
+</head>
+<body class="flex h-screen overflow-hidden">
+
+    <aside class="sidebar w-64 space-y-6 py-7 px-2 absolute inset-y-0 left-0 transform -translate-x-full md:relative md:translate-x-0 transition duration-200 ease-in-out flex flex-col">
+        <div class="px-4 mb-4 text-center">
+            <img src="https://i.imgur.com/0UlqDSN.png" alt="Sustainability Solutions" class="mx-auto mb-4 h-15">
+            <h1 class="text-xl font-bold text-dark-blue">Admin Portal</h1>
+            <p class="text-sm text-green-teal">Operational Dashboard</p>
+        </div>
+        <nav class="flex-grow">
+            <a href="#" class="active flex items-center space-x-3 py-3 px-4 rounded-md">
+                <i class="fas fa-tachometer-alt fa-fw"></i>
+                <span>Dashboard</span>
+            </a>
+            <a href="#" class="flex items-center space-x-3 py-3 px-4 rounded-md">
+                <i class="fas fa-truck fa-fw"></i>
+                <span>Site Operations</span>
+            </a>
+            <a href="#" class="flex items-center space-x-3 py-3 px-4 rounded-md">
+                <i class="fas fa-users fa-fw"></i>
+                <span>Contractor Mgmt</span>
+            </a>
+            <a href="#" class="flex items-center space-x-3 py-3 px-4 rounded-md">
+                <i class="fas fa-file-invoice-dollar fa-fw"></i>
+                <span>Billing & Wallet</span>
+            </a>
+            <a href="#" class="flex items-center space-x-3 py-3 px-4 rounded-md">
+                <i class="fas fa-chart-bar fa-fw"></i>
+                <span>Reports</span>
+            </a>
+            <a href="#" class="flex items-center space-x-3 py-3 px-4 rounded-md">
+                <i class="fas fa-bell fa-fw"></i>
+                <span>Alerts</span>
+            </a>
+            <a href="#" class="flex items-center space-x-3 py-3 px-4 rounded-md">
+                <i class="fas fa-cogs fa-fw"></i>
+                <span>System Config</span>
+            </a>
+             <a href="#" class="flex items-center space-x-3 py-3 px-4 rounded-md">
+                <i class="fas fa-recycle fa-fw"></i>
+                <span>Recycled Materials</span>
+            </a>
+        </nav>
+        <div class="px-4 py-2 border-t border-gray-700 dark:border-gray-600">
+            <a href="#" class="flex items-center space-x-3 py-2 px-2 rounded-md text-sm">
+                <i class="fas fa-user-circle fa-fw"></i>
+                <span>Admin User</span>
+            </a>
+            <a href="#" class="flex items-center space-x-3 py-2 px-2 rounded-md text-sm text-red-400 hover:bg-red-500 hover:text-white">
+                <i class="fas fa-sign-out-alt fa-fw"></i>
+                <span>Logout</span>
+            </a>
+        </div>
+    </aside>
+
+    <div class="flex-1 flex flex-col overflow-hidden">
+        <header class="top-bar p-4 flex justify-between items-center">
+            <div class="flex items-center">
+                <button id="mobileMenuButton" class="md:hidden mr-4 text-gray-600 dark:text-gray-400">
+                    <i class="fas fa-bars text-xl"></i>
+                </button>
+                <h2 class="text-xl font-semibold top-bar-text">Operational Dashboard</h2>
+            </div>
+            <div class="flex items-center space-x-4">
+                <button id="themeToggle" class="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-600 focus:outline-none">
+                    <i class="fas fa-moon text-xl text-gray-500 dark:text-yellow-400"></i> 
+                </button>
+                <div class="relative">
+                    <i class="fas fa-language text-xl text-gray-500 dark:text-gray-400 cursor-pointer" title="Switch Language (EN/AR)"></i>
+                </div>
+                <div class="relative">
+                    <i class="fas fa-bell text-xl text-gray-500 dark:text-gray-400 cursor-pointer"></i>
+                    <span class="absolute -top-1 -right-1 bg-coral text-white text-xs w-4 h-4 flex items-center justify-center rounded-full">3</span>
+                </div>
+                <img src="https://placehold.co/40x40/073B4C/FFFFFF?text=AU" alt="User Avatar" class="w-10 h-10 rounded-full object-cover">
+            </div>
+        </header>
+
+        <main class="flex-1 overflow-x-hidden overflow-y-auto p-6">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+                <div class="card p-5 flex items-center space-x-4">
+                    <div class="stat-icon bg-blue text-white">
+                        <i class="fas fa-truck-loading"></i>
+                    </div>
+                    <div>
+                        <p class="text-sm secondary-text-color">Total Waste Today</p>
+                        <p class="text-2xl font-bold primary-text-color">1,230 <span class="text-sm font-normal">Tons</span></p>
+                    </div>
+                </div>
+                <div class="card p-5 flex items-center space-x-4">
+                    <div class="stat-icon bg-green-teal text-white">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    <div>
+                        <p class="text-sm secondary-text-color">Vehicles Processed</p>
+                        <p class="text-2xl font-bold primary-text-color">152</p>
+                    </div>
+                </div>
+                <div class="card p-5 flex items-center space-x-4">
+                    <div class="stat-icon bg-yellow text-dark-blue">
+                        <i class="fas fa-exclamation-triangle"></i>
+                    </div>
+                    <div>
+                        <p class="text-sm secondary-text-color">Active Alerts</p>
+                        <p class="text-2xl font-bold primary-text-color">5</p>
+                    </div>
+                </div>
+                <div class="card p-5 flex items-center space-x-4">
+                     <div class="stat-icon bg-coral text-white">
+                        <i class="fas fa-dollar-sign"></i>
+                    </div>
+                    <div>
+                        <p class="text-sm secondary-text-color">Revenue Today</p>
+                        <p class="text-2xl font-bold primary-text-color"><span class="icon-saudi_riyal"></span> 45,600</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+                <div class="card p-5">
+                    <h3 class="text-lg font-semibold primary-text-color mb-3">Waste Volume by Type (Last 7 Days)</h3>
+                    <div class="chart-container">
+                        <canvas id="wasteVolumeChart"></canvas>
+                    </div>
+                </div>
+                <div class="card p-5">
+                    <h3 class="text-lg font-semibold primary-text-color mb-3">Vehicle Throughput (Hourly)</h3>
+                    <div class="chart-container">
+                        <canvas id="vehicleThroughputChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
+                <div class="card lg:col-span-2 p-5">
+                    <h3 class="text-lg font-semibold primary-text-color mb-3">Recent Site Activity</h3>
+                    <div class="overflow-x-auto">
+                        <table class="w-full table">
+                            <thead>
+                                <tr>
+                                    <th>Vehicle ID</th>
+                                    <th>Contractor</th>
+                                    <th>Entry Time</th>
+                                    <th>Weight (Net)</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>SAR-1234</td>
+                                    <td>Eco Builders Ltd.</td>
+                                    <td>08:15 AM</td>
+                                    <td>12.5 Tons</td>
+                                    <td><span class="badge badge-green">Completed</span></td>
+                                </tr>
+                                <tr>
+                                    <td>KSA-5678</td>
+                                    <td>GreenScape Co.</td>
+                                    <td>08:32 AM</td>
+                                    <td>8.2 Tons</td>
+                                    <td><span class="badge badge-green">Completed</span></td>
+                                </tr>
+                                <tr>
+                                    <td>RYD-9101</td>
+                                    <td>Modern Waste Sol.</td>
+                                    <td>08:45 AM</td>
+                                    <td>-</td>
+                                    <td><span class="badge badge-blue">At Weighbridge</span></td>
+                                </tr>
+                                 <tr>
+                                    <td>JED-1121</td>
+                                    <td>City Cleaners</td>
+                                    <td>08:50 AM</td>
+                                    <td>-</td>
+                                    <td><span class="badge badge-yellow">Awaiting Weigh-Out</span></td>
+                                </tr>
+                                <tr>
+                                    <td>DAM-3141</td>
+                                    <td>Waste Away Inc.</td>
+                                    <td>09:02 AM</td>
+                                    <td>15.1 Tons</td>
+                                    <td><span class="badge badge-red">Violation Flagged</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="card p-5">
+                    <h3 class="text-lg font-semibold primary-text-color mb-3">Site Status Overview</h3>
+                    <div class="space-y-4">
+                        <div>
+                            <div class="flex justify-between text-sm mb-1">
+                                <span class="secondary-text-color">Jeddah Site 1</span>
+                                <span class="font-semibold text-green-teal">Operational</span>
+                            </div>
+                            <div class="w-full bg-gray-200 dark:bg-gray-600 rounded-full h-2.5">
+                                <div class="bg-green-teal h-2.5 rounded-full" style="width: 90%"></div>
+                            </div>
+                            <p class="text-xs secondary-text-color mt-1">Capacity: 90% | Gates: 2/2 Online</p>
+                        </div>
+                        <div>
+                            <div class="flex justify-between text-sm mb-1">
+                                <span class="secondary-text-color">Riyadh Site Alpha</span>
+                                <span class="font-semibold text-green-teal">Operational</span>
+                            </div>
+                            <div class="w-full bg-gray-200 dark:bg-gray-600 rounded-full h-2.5">
+                                <div class="bg-green-teal h-2.5 rounded-full" style="width: 75%"></div>
+                            </div>
+                             <p class="text-xs secondary-text-color mt-1">Capacity: 75% | Gates: 3/3 Online</p>
+                        </div>
+                        <div>
+                            <div class="flex justify-between text-sm mb-1">
+                                <span class="secondary-text-color">Dammam Site Beta</span>
+                                <span class="font-semibold text-yellow">Partial Alert</span>
+                            </div>
+                            <div class="w-full bg-gray-200 dark:bg-gray-600 rounded-full h-2.5">
+                                <div class="bg-yellow h-2.5 rounded-full" style="width: 60%"></div>
+                            </div>
+                            <p class="text-xs secondary-text-color mt-1">Capacity: 60% | Gates: 1/2 Online (Gate 2 Alert)</p>
+                        </div>
+                         <div>
+                            <div class="flex justify-between text-sm mb-1">
+                                <span class="secondary-text-color">Makkah Site Gamma</span>
+                                <span class="font-semibold text-red-500">Offline</span>
+                            </div>
+                            <div class="w-full bg-gray-200 dark:bg-gray-600 rounded-full h-2.5">
+                                <div class="bg-coral h-2.5 rounded-full" style="width: 100%"></div>
+                            </div>
+                            <p class="text-xs secondary-text-color mt-1">Maintenance Scheduled</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        const themeToggle = document.getElementById('themeToggle');
+        const htmlElement = document.documentElement;
+        let wasteVolumeChart, vehicleThroughputChart;
+
+        const commonTooltipTitleCallback = function(tooltipItems) {
+            const item = tooltipItems[0];
+            let label = item.chart.data.labels[item.dataIndex];
+            if (Array.isArray(label)) {
+              return label.join(' ');
+            } else {
+              return label;
+            }
+        };
+
+        function applyTheme(isDark) {
+            const themeIcon = themeToggle.querySelector('i');
+            if (isDark) {
+                htmlElement.classList.add('dark');
+                themeIcon.classList.remove('fa-moon');
+                themeIcon.classList.add('fa-sun');
+                themeIcon.classList.add('text-yellow-400');
+                themeIcon.classList.remove('text-gray-500');
+            } else {
+                htmlElement.classList.remove('dark');
+                themeIcon.classList.remove('fa-sun');
+                themeIcon.classList.add('fa-moon');
+                themeIcon.classList.remove('text-yellow-400');
+                themeIcon.classList.add('text-gray-500');
+            }
+
+            const chartGridColor = isDark ? getComputedStyle(htmlElement).getPropertyValue('--chart-grid-color').trim() : getComputedStyle(htmlElement).getPropertyValue('--chart-grid-color').trim();
+            const chartTickColor = isDark ? getComputedStyle(htmlElement).getPropertyValue('--chart-tick-color').trim() : getComputedStyle(htmlElement).getPropertyValue('--chart-tick-color').trim();
+            const chartLegendColor = isDark ? getComputedStyle(htmlElement).getPropertyValue('--text-primary').trim() : getComputedStyle(htmlElement).getPropertyValue('--text-primary').trim();
+
+
+            if (wasteVolumeChart) {
+                wasteVolumeChart.options.plugins.legend.labels.color = chartLegendColor;
+                wasteVolumeChart.data.datasets[0].borderColor = isDark ? getComputedStyle(htmlElement).getPropertyValue('--bg-card').trim() : '#FFFFFF';
+                wasteVolumeChart.update();
+            }
+            if (vehicleThroughputChart) {
+                vehicleThroughputChart.options.scales.y.ticks.color = chartTickColor;
+                vehicleThroughputChart.options.scales.x.ticks.color = chartTickColor;
+                vehicleThroughputChart.options.scales.y.grid.color = chartGridColor;
+                vehicleThroughputChart.update();
+            }
+        }
+
+        themeToggle.addEventListener('click', () => {
+            const isDark = htmlElement.classList.toggle('dark');
+            localStorage.setItem('swmsTheme', isDark ? 'dark' : 'light');
+            applyTheme(isDark);
+        });
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const savedTheme = localStorage.getItem('swmsTheme');
+            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            const initialDark = savedTheme === 'dark' || (!savedTheme && prefersDark);
+            
+            applyTheme(initialDark); // Apply theme first
+
+            const initialCardBg = getComputedStyle(htmlElement).getPropertyValue('--bg-card').trim();
+
+            const wasteVolumeCtx = document.getElementById('wasteVolumeChart').getContext('2d');
+            wasteVolumeChart = new Chart(wasteVolumeCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Construction & Demolition', 'Municipal Solid Waste', 'Industrial Waste', 'Recyclables'],
+                    datasets: [{
+                        label: 'Waste Volume',
+                        data: [450, 300, 150, 100], 
+                        backgroundColor: [
+                            '#118AB2', 
+                            '#06D6A0', 
+                            '#FFD166', 
+                            '#073B4C'  
+                        ],
+                        borderColor: initialCardBg, // Set initial border color based on theme
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { 
+                            position: 'right', 
+                            labels: { 
+                                color: getComputedStyle(htmlElement).getPropertyValue('--text-primary').trim(),
+                                boxWidth: 15 
+                            } 
+                        },
+                        tooltip: { callbacks: { title: commonTooltipTitleCallback } }
+                    }
+                }
+            });
+
+            const vehicleThroughputCtx = document.getElementById('vehicleThroughputChart').getContext('2d');
+            vehicleThroughputChart = new Chart(vehicleThroughputCtx, {
+                type: 'line',
+                data: {
+                    labels: ['6 AM', '7 AM', '8 AM', '9 AM', '10 AM', '11 AM', '12 PM'],
+                    datasets: [{
+                        label: 'Vehicles per Hour',
+                        data: [10, 15, 25, 30, 22, 18, 20], 
+                        borderColor: '#FF6B6B', 
+                        backgroundColor: 'rgba(255, 107, 107, 0.1)',
+                        tension: 0.3,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: { 
+                            beginAtZero: true, 
+                            ticks: { color: getComputedStyle(htmlElement).getPropertyValue('--chart-tick-color').trim() }, 
+                            grid: { color: getComputedStyle(htmlElement).getPropertyValue('--chart-grid-color').trim()}
+                        },
+                        x: { 
+                            ticks: { color: getComputedStyle(htmlElement).getPropertyValue('--chart-tick-color').trim() }, 
+                            grid: { display: false } 
+                        }
+                    },
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: { callbacks: { title: commonTooltipTitleCallback } }
+                    }
+                }
+            });
+            applyTheme(initialDark); // Re-apply after charts are initialized to ensure colors are correct
+        });
+
+        const mobileMenuButton = document.getElementById('mobileMenuButton');
+        const sidebar = document.querySelector('.sidebar');
+        if (mobileMenuButton && sidebar) {
+            mobileMenuButton.addEventListener('click', () => {
+                sidebar.classList.toggle('-translate-x-full');
+            });
+        }
+    </script>
+</body>
+</html>

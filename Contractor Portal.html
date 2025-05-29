@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="en" class="">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SWMS Contractor Portal - Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        :root {
+            --color-coral: #FF6B6B;
+            --color-yellow: #FFD166;
+            --color-green-teal: #06D6A0;
+            --color-blue: #118AB2;
+            --color-dark-blue: #073B4C;
+            --color-white: #FFFFFF;
+            --color-light-gray: #F7FAFC;
+            --color-medium-gray: #E2E8F0;
+            --color-dark-gray: #4A5568;
+            --color-border-light: #E2E8F0;
+            --color-border-dark: #4A5568;
+
+            /* Light Mode Defaults */
+            --bg-body: #F0F4F8;
+            --bg-navbar: var(--color-dark-blue);
+            --text-navbar: var(--color-light-gray);
+            --hover-text-navbar: var(--color-green-teal);
+            --bg-card: var(--color-white);
+            --text-primary: var(--color-dark-blue);
+            --text-secondary: var(--color-dark-gray);
+            --border-color: var(--color-border-light);
+            --table-header-bg: #F8FAFC;
+            --chart-grid-color: var(--color-border-light);
+            --chart-tick-color: var(--color-dark-gray);
+            --button-primary-bg: var(--color-blue);
+            --button-primary-text: var(--color-white);
+            --button-primary-hover-bg: #0E7694; /* Slightly darker blue */
+        }
+
+        html.dark {
+            --bg-body: #1A202C; /* gray-800 */
+            --bg-navbar: #042A35; /* Darker blue */
+            --text-navbar: #A0AEC0; /* gray-400 */
+            --hover-text-navbar: var(--color-green-teal);
+            --bg-card: #2D3748; /* gray-700 */
+            --text-primary: var(--color-light-gray);
+            --text-secondary: #A0AEC0; /* gray-400 */
+            --border-color: var(--color-border-dark);
+            --table-header-bg: #1A202C; /* gray-800 */
+            --chart-grid-color: var(--color-border-dark);
+            --chart-tick-color: var(--color-light-gray);
+            --button-primary-bg: var(--color-green-teal);
+            --button-primary-text: var(--color-dark-blue);
+            --button-primary-hover-bg: #05B386; /* Slightly darker green-teal */
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-body);
+            color: var(--text-secondary);
+            transition: background-color 0.3s, color 0.3s;
+        }
+        
+        .navbar {
+            background-color: var(--bg-navbar);
+        }
+        .navbar a, .navbar button {
+            color: var(--text-navbar);
+            transition: color 0.2s;
+        }
+        .navbar a:hover, .navbar button:hover {
+            color: var(--hover-text-navbar);
+        }
+        .navbar a.active {
+            color: var(--color-green-teal);
+            font-weight: 600;
+            border-bottom: 2px solid var(--color-green-teal);
+        }
+        .card {
+            background-color: var(--bg-card);
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            transition: background-color 0.3s;
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            height: 280px; 
+        }
+        .table th, .table td {
+            padding: 0.75rem 1rem;
+            border-bottom: 1px solid var(--border-color);
+            text-align: left;
+        }
+        .table th {
+            background-color: var(--table-header-bg);
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+        .table td {
+            color: var(--text-secondary);
+        }
+        .badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        .badge-red { background-color: var(--color-coral); color: var(--color-white); }
+        .badge-yellow { background-color: var(--color-yellow); color: var(--color-dark-blue); }
+        .badge-green { background-color: var(--color-green-teal); color: var(--color-dark-blue); }
+        .badge-blue { background-color: var(--color-blue); color: var(--color-white); }
+        
+        .primary-text-color { color: var(--text-primary); }
+        .secondary-text-color { color: var(--text-secondary); }
+
+        .btn-primary {
+            background-color: var(--button-primary-bg);
+            color: var(--button-primary-text);
+            padding: 0.625rem 1.25rem; 
+            border-radius: 0.5rem; 
+            font-weight: 600;
+            transition: background-color 0.2s;
+        }
+        .btn-primary:hover {
+            background-color: var(--button-primary-hover-bg);
+        }
+        .btn-secondary {
+            background-color: transparent;
+            color: var(--text-primary);
+            border: 1px solid var(--border-color);
+            padding: 0.625rem 1.25rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            transition: background-color 0.2s, color 0.2s, border-color 0.2s;
+        }
+        html.dark .btn-secondary {
+             color: var(--text-navbar); 
+        }
+        .btn-secondary:hover {
+            background-color: var(--border-color);
+        }
+    </style>
+</head>
+<body class="min-h-screen">
+
+    <nav class="navbar shadow-lg">
+        <div class="container mx-auto px-6 py-3 flex justify-between items-center">
+            <div class="flex items-center">
+                <img src="https://i.imgur.com/0UlqDSN.png" alt="Sustainability Solutions" class="h-8 mr-3">
+                <a href="#" class="text-xl font-bold text-white">Contractor Portal</a>
+            </div>
+            <div class="hidden md:flex items-center space-x-6">
+                <a href="#" class="active py-2">Dashboard</a>
+                <a href="#" class="py-2">My Trips</a>
+                <a href="#" class="py-2">Vehicles</a>
+                <a href="#" class="py-2">Wallet</a>
+                <a href="#" class="py-2">Support</a>
+            </div>
+            <div class="flex items-center space-x-4">
+                <button id="themeToggle" class="p-2 rounded-full hover:bg-gray-700 focus:outline-none">
+                     <i class="fas fa-moon text-xl"></i>
+                </button>
+                 <div class="relative">
+                    <i class="fas fa-language text-xl cursor-pointer" title="Switch Language (EN/AR)"></i>
+                </div>
+                <div class="relative">
+                    <i class="fas fa-bell text-xl cursor-pointer"></i>
+                    <span class="absolute -top-1 -right-1 bg-coral text-white text-xs w-4 h-4 flex items-center justify-center rounded-full">2</span>
+                </div>
+                <img src="https://placehold.co/40x40/FFD166/073B4C?text=CP" alt="Contractor Avatar" class="w-10 h-10 rounded-full object-cover border-2 border-yellow-400">
+                <button class="md:hidden" id="mobileMenuToggle">
+                    <i class="fas fa-bars text-xl"></i>
+                </button>
+            </div>
+        </div>
+        <div class="md:hidden hidden" id="mobileMenu">
+            <a href="#" class="block py-2 px-4 text-sm hover:bg-gray-700 active">Dashboard</a>
+            <a href="#" class="block py-2 px-4 text-sm hover:bg-gray-700">My Trips</a>
+            <a href="#" class="block py-2 px-4 text-sm hover:bg-gray-700">Vehicles</a>
+            <a href="#" class="block py-2 px-4 text-sm hover:bg-gray-700">Wallet</a>
+            <a href="#" class="block py-2 px-4 text-sm hover:bg-gray-700">Support</a>
+        </div>
+    </nav>
+
+    <main class="container mx-auto p-6">
+        <header class="mb-8">
+            <h1 class="text-3xl font-bold primary-text-color">Welcome, Eco Builders Ltd.</h1>
+            <p class="secondary-text-color">Here's an overview of your account and recent activity.</p>
+        </header>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+            <div class="card p-6 text-center">
+                <i class="fas fa-wallet text-4xl text-green-teal mb-3"></i>
+                <p class="text-sm secondary-text-color">Wallet Balance</p>
+                <p class="text-3xl font-bold primary-text-color mt-1">SAR 12,550.75</p>
+                <button class="btn-primary mt-4 text-sm w-full">Top-up Wallet</button>
+            </div>
+            <div class="card p-6 text-center">
+                <i class="fas fa-truck-moving text-4xl text-blue mb-3"></i>
+                <p class="text-sm secondary-text-color">Active Vehicles</p>
+                <p class="text-3xl font-bold primary-text-color mt-1">8 / 10</p>
+                <button class="btn-secondary mt-4 text-sm w-full">Manage Vehicles</button>
+            </div>
+            <div class="card p-6 text-center">
+                <i class="fas fa-route text-4xl text-yellow mb-3"></i>
+                <p class="text-sm secondary-text-color">Trips This Month</p>
+                <p class="text-3xl font-bold primary-text-color mt-1">76</p>
+                 <a href="#" class="inline-block text-sm text-blue hover:underline mt-4">View Trip History</a>
+            </div>
+            <div class="card p-6 text-center">
+                <i class="fas fa-file-alt text-4xl text-coral mb-3"></i>
+                <p class="text-sm secondary-text-color">Pending Documents</p>
+                <p class="text-3xl font-bold primary-text-color mt-1">1</p>
+                 <a href="#" class="inline-block text-sm text-coral hover:underline mt-4">Upload Now</a>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+            <div class="card lg:col-span-2 p-5">
+                <h3 class="text-xl font-semibold primary-text-color mb-4">Recent Trips</h3>
+                <div class="overflow-x-auto">
+                    <table class="w-full table">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Vehicle ID</th>
+                                <th>Site</th>
+                                <th>Net Weight</th>
+                                <th>Fee (SAR)</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>2025-05-20</td>
+                                <td>SAR-1234</td>
+                                <td>Jeddah Site 1</td>
+                                <td>12.5 Tons</td>
+                                <td>375.00</td>
+                                <td><span class="badge badge-green">Completed</span></td>
+                            </tr>
+                            <tr>
+                                <td>2025-05-20</td>
+                                <td>SAR-1235</td>
+                                <td>Riyadh Alpha</td>
+                                <td>9.8 Tons</td>
+                                <td>294.00</td>
+                                <td><span class="badge badge-green">Completed</span></td>
+                            </tr>
+                            <tr>
+                                <td>2025-05-19</td>
+                                <td>SAR-1234</td>
+                                <td>Jeddah Site 1</td>
+                                <td>11.2 Tons</td>
+                                <td>336.00</td>
+                                <td><span class="badge badge-green">Completed</span></td>
+                            </tr>
+                            <tr>
+                                <td>2025-05-19</td>
+                                <td>SAR-1236</td>
+                                <td>Dammam Beta</td>
+                                <td>-</td>
+                                <td>-</td>
+                                <td><span class="badge badge-yellow">Awaiting Weigh-Out</span></td>
+                            </tr>
+                             <tr>
+                                <td>2025-05-18</td>
+                                <td>SAR-1235</td>
+                                <td>Riyadh Alpha</td>
+                                <td>10.5 Tons</td>
+                                <td>315.00</td>
+                                <td><span class="badge badge-red">Fee Discrepancy</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="card p-5">
+                <h3 class="text-xl font-semibold primary-text-color mb-4">Monthly Waste Disposed</h3>
+                <div class="chart-container">
+                    <canvas id="monthlyWasteChart"></canvas>
+                </div>
+                <p class="text-center text-sm secondary-text-color mt-3">Total this month: 215 Tons</p>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="card p-5">
+                <h3 class="text-xl font-semibold primary-text-color mb-4">Quick Actions</h3>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <button class="btn-primary flex items-center justify-center space-x-2">
+                        <i class="fas fa-plus-circle"></i>
+                        <span>Register New Vehicle</span>
+                    </button>
+                    <button class="btn-primary flex items-center justify-center space-x-2">
+                        <i class="fas fa-file-invoice"></i>
+                        <span>View Invoices</span>
+                    </button>
+                    <button class="btn-secondary flex items-center justify-center space-x-2">
+                        <i class="fas fa-history"></i>
+                        <span>Full Trip Log</span>
+                    </button>
+                    <button class="btn-secondary flex items-center justify-center space-x-2">
+                        <i class="fas fa-headset"></i>
+                        <span>Contact Support</span>
+                    </button>
+                </div>
+            </div>
+            <div class="card p-5">
+                <h3 class="text-xl font-semibold primary-text-color mb-4">Notifications & Alerts</h3>
+                <div class="space-y-3">
+                    <div class="p-3 rounded-md border border-yellow bg-yellow bg-opacity-10 dark:bg-opacity-20">
+                        <div class="flex items-start space-x-2">
+                            <i class="fas fa-exclamation-triangle text-yellow mt-1"></i>
+                            <div>
+                                <p class="font-medium primary-text-color">Low Wallet Balance</p>
+                                <p class="text-sm secondary-text-color">Your wallet balance is SAR 150.75. Please top-up soon.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="p-3 rounded-md border border-coral bg-coral bg-opacity-10 dark:bg-opacity-20">
+                         <div class="flex items-start space-x-2">
+                            <i class="fas fa-file-excel text-coral mt-1"></i>
+                            <div>
+                                <p class="font-medium primary-text-color">Vehicle Registration Expiring</p>
+                                <p class="text-sm secondary-text-color">Registration for vehicle SAR-1230 expires in 7 days.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="text-center py-8 mt-12 border-t border-color">
+        <p class="text-sm secondary-text-color">&copy; 2025 SWMS Contractor Portal. All rights reserved.</p>
+    </footer>
+
+    <script>
+        const themeToggle = document.getElementById('themeToggle');
+        const htmlElement = document.documentElement;
+        let monthlyWasteChart;
+
+        const commonTooltipTitleCallback = function(tooltipItems) {
+            const item = tooltipItems[0];
+            let label = item.chart.data.labels[item.dataIndex];
+            if (Array.isArray(label)) {
+              return label.join(' ');
+            } else {
+              return label;
+            }
+        };
+
+        function applyTheme(isDark) {
+            const themeIcon = themeToggle.querySelector('i');
+            if (isDark) {
+                htmlElement.classList.add('dark');
+                themeIcon.classList.remove('fa-moon');
+                themeIcon.classList.add('fa-sun');
+                themeIcon.classList.add('text-yellow-400');
+                themeIcon.classList.remove('text-gray-500'); // Assuming light mode icon was gray
+            } else {
+                htmlElement.classList.remove('dark');
+                themeIcon.classList.remove('fa-sun');
+                themeIcon.classList.add('fa-moon');
+                themeIcon.classList.remove('text-yellow-400');
+                themeIcon.classList.add('text-gray-500'); // Default light mode icon color
+            }
+
+            const chartGridColor = isDark ? getComputedStyle(htmlElement).getPropertyValue('--chart-grid-color').trim() : getComputedStyle(htmlElement).getPropertyValue('--chart-grid-color').trim();
+            const chartTickColor = isDark ? getComputedStyle(htmlElement).getPropertyValue('--chart-tick-color').trim() : getComputedStyle(htmlElement).getPropertyValue('--chart-tick-color').trim();
+            const chartLegendColor = isDark ? getComputedStyle(htmlElement).getPropertyValue('--text-primary').trim() : getComputedStyle(htmlElement).getPropertyValue('--text-primary').trim();
+
+            if (monthlyWasteChart) {
+                monthlyWasteChart.options.scales.y.ticks.color = chartTickColor;
+                monthlyWasteChart.options.scales.x.ticks.color = chartTickColor;
+                monthlyWasteChart.options.scales.y.grid.color = chartGridColor;
+                monthlyWasteChart.options.plugins.legend.labels.color = chartLegendColor;
+                monthlyWasteChart.update();
+            }
+        }
+
+        themeToggle.addEventListener('click', () => {
+            const isDark = htmlElement.classList.toggle('dark');
+            localStorage.setItem('swmsContractorTheme', isDark ? 'dark' : 'light');
+            applyTheme(isDark);
+        });
+        
+        const mobileMenuToggle = document.getElementById('mobileMenuToggle');
+        const mobileMenu = document.getElementById('mobileMenu');
+        if(mobileMenuToggle && mobileMenu) {
+            mobileMenuToggle.addEventListener('click', () => {
+                mobileMenu.classList.toggle('hidden');
+            });
+        }
+
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const savedTheme = localStorage.getItem('swmsContractorTheme');
+            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            const initialDark = savedTheme === 'dark' || (!savedTheme && prefersDark);
+            
+            applyTheme(initialDark); // Apply theme first
+
+            const monthlyWasteCtx = document.getElementById('monthlyWasteChart').getContext('2d');
+            monthlyWasteChart = new Chart(monthlyWasteCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May'], 
+                    datasets: [{
+                        label: 'Waste Disposed (Tons)',
+                        data: [180, 205, 230, 190, 215], 
+                        backgroundColor: [
+                            'rgba(6, 214, 160, 0.7)', 
+                            'rgba(17, 138, 178, 0.7)', 
+                            'rgba(255, 209, 102, 0.7)', 
+                            'rgba(255, 107, 107, 0.7)', 
+                            'rgba(7, 59, 76, 0.7)' 
+                        ],
+                        borderColor: [ 
+                            '#06D6A0',
+                            '#118AB2',
+                            '#FFD166',
+                            '#FF6B6B',
+                            '#073B4C'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: { 
+                            beginAtZero: true, 
+                            ticks: { color: getComputedStyle(htmlElement).getPropertyValue('--chart-tick-color').trim() }, 
+                            grid: { color: getComputedStyle(htmlElement).getPropertyValue('--chart-grid-color').trim() }
+                        },
+                        x: { 
+                            ticks: { color: getComputedStyle(htmlElement).getPropertyValue('--chart-tick-color').trim() }, 
+                            grid: { display: false } 
+                        }
+                    },
+                    plugins: {
+                        legend: { 
+                            display: false,
+                            labels: { color: getComputedStyle(htmlElement).getPropertyValue('--text-primary').trim() }
+                        },
+                        tooltip: { callbacks: { title: commonTooltipTitleCallback } }
+                    }
+                }
+            });
+            applyTheme(initialDark); // Re-apply after chart is initialized
+        });
+    </script>
+</body>
+</html>

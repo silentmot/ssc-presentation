@@ -1,0 +1,704 @@
+<!DOCTYPE html>
+<!-- saved from url=(0151)file:///C:/Users/tayeb.m/OneDrive%20-%20Saudi%20Investment%20Recycling%20Company%20(SIRC)/Documents/SWMS/SWMS%20Industry%20Trends%20&%20Technology.html -->
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Waste Management: Industry Trends &amp; Technology</title>
+    <script src="./SWMS Industry Trends &amp; Technology_files/saved_resource"></script>
+    <script src="./SWMS Industry Trends &amp; Technology_files/chart.js.download"></script>
+    <link href="./SWMS Industry Trends &amp; Technology_files/css2" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #e7ebec; 
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        :root {
+            --color-coral: #FF6B6B;
+            --color-yellow: #FFD166;
+            --color-green-teal: #06D6A0;
+            --color-blue: #118AB2;
+            --color-dark-blue: #073B4C;
+            --color-white: #FFFFFF;
+            --color-light-gray: #F7FAFC;
+            --color-medium-gray: #E2E8F0;
+            --color-dark-gray: #4A5568;
+        }
+        .bg-coral { background-color: var(--color-coral); }
+        .text-coral { color: var(--color-coral); }
+        .border-coral { border-color: var(--color-coral); }
+
+        .bg-yellow { background-color: var(--color-yellow); }
+        .text-yellow { color: var(--color-yellow); }
+
+        .bg-green-teal { background-color: var(--color-green-teal); }
+        .text-green-teal { color: var(--color-green-teal); }
+
+        .bg-blue { background-color: var(--color-blue); }
+        .text-blue { color: var(--color-blue); }
+
+        .bg-dark-blue { background-color: var(--color-dark-blue); }
+        .text-dark-blue { color: var(--color-dark-blue); }
+
+        .section-title {
+            font-size: 2.25rem; 
+            font-weight: 700;
+            color: var(--color-dark-blue);
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+        .section-subtitle {
+            font-size: 1.125rem; 
+            color: var(--color-dark-gray);
+            margin-bottom: 2.5rem;
+            text-align: center;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .card {
+            background-color: var(--color-white);
+            border-radius: 0.75rem; 
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            padding: 1.5rem; 
+            margin-bottom: 1.5rem; 
+        }
+        .stat-number {
+            font-size: 3rem; 
+            font-weight: 700;
+            color: var(--color-blue);
+            line-height: 1;
+        }
+        .stat-label {
+            font-size: 1rem; 
+            color: var(--color-dark-gray);
+            margin-top: 0.5rem;
+        }
+        .icon-placeholder {
+            font-size: 3rem;
+            padding: 1rem;
+            border-radius: 50%;
+            display: inline-block;
+            text-align: center;
+            width: 80px;
+            height: 80px;
+            line-height: 50px; 
+        }
+        .flowchart-step {
+            border: 2px solid var(--color-blue);
+            background-color: #E0F2FE; 
+            color: var(--color-dark-blue);
+            padding: 0.75rem 1.25rem;
+            border-radius: 0.5rem;
+            text-align: center;
+            font-weight: 600;
+            margin-bottom: 0.5rem; 
+            min-width: 150px;
+        }
+        .flowchart-arrow {
+            font-size: 1.5rem; 
+            color: var(--color-blue);
+            margin: 0.25rem 0; 
+            text-align: center;
+        }
+        .timeline-item {
+            position: relative;
+            padding-left: 2.5rem; 
+            padding-bottom: 1.5rem;
+            border-left: 3px solid var(--color-green-teal);
+        }
+        .timeline-dot {
+            position: absolute;
+            left: -0.7rem; 
+            top: 0;
+            height: 1.25rem; 
+            width: 1.25rem; 
+            background-color: var(--color-green-teal);
+            border-radius: 50%;
+            border: 3px solid var(--color-white);
+        }
+        .timeline-content h3 {
+            color: var(--color-dark-blue);
+            font-weight: 600;
+        }
+        .timeline-content p {
+            color: var(--color-dark-gray);
+            font-size: 0.875rem; 
+        }
+        .gemini-btn {
+            background-color: var(--color-yellow);
+            color: var(--color-dark-blue);
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.375rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-left: 0.5rem;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        .gemini-btn:hover {
+            background-color: #FFC107; 
+        }
+        .gemini-response {
+            margin-top: 0.75rem;
+            padding: 0.75rem;
+            background-color: #E0F2FE; 
+            border-left: 4px solid var(--color-blue);
+            font-size: 0.875rem;
+            color: var(--color-dark-blue);
+            border-radius: 0.25rem;
+        }
+
+    </style>
+<style>*, ::before, ::after{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgb(59 130 246 / 0.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }::backdrop{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgb(59 130 246 / 0.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }/* ! tailwindcss v3.4.16 | MIT License | https://tailwindcss.com */*,::after,::before{box-sizing:border-box;border-width:0;border-style:solid;border-color:#e5e7eb}::after,::before{--tw-content:''}:host,html{line-height:1.5;-webkit-text-size-adjust:100%;-moz-tab-size:4;tab-size:4;font-family:ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";font-feature-settings:normal;font-variation-settings:normal;-webkit-tap-highlight-color:transparent}body{margin:0;line-height:inherit}hr{height:0;color:inherit;border-top-width:1px}abbr:where([title]){-webkit-text-decoration:underline dotted;text-decoration:underline dotted}h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight:inherit}a{color:inherit;text-decoration:inherit}b,strong{font-weight:bolder}code,kbd,pre,samp{font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;font-feature-settings:normal;font-variation-settings:normal;font-size:1em}small{font-size:80%}sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline}sub{bottom:-.25em}sup{top:-.5em}table{text-indent:0;border-color:inherit;border-collapse:collapse}button,input,optgroup,select,textarea{font-family:inherit;font-feature-settings:inherit;font-variation-settings:inherit;font-size:100%;font-weight:inherit;line-height:inherit;letter-spacing:inherit;color:inherit;margin:0;padding:0}button,select{text-transform:none}button,input:where([type=button]),input:where([type=reset]),input:where([type=submit]){-webkit-appearance:button;background-color:transparent;background-image:none}:-moz-focusring{outline:auto}:-moz-ui-invalid{box-shadow:none}progress{vertical-align:baseline}::-webkit-inner-spin-button,::-webkit-outer-spin-button{height:auto}[type=search]{-webkit-appearance:textfield;outline-offset:-2px}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-file-upload-button{-webkit-appearance:button;font:inherit}summary{display:list-item}blockquote,dd,dl,figure,h1,h2,h3,h4,h5,h6,hr,p,pre{margin:0}fieldset{margin:0;padding:0}legend{padding:0}menu,ol,ul{list-style:none;margin:0;padding:0}dialog{padding:0}textarea{resize:vertical}input::placeholder,textarea::placeholder{opacity:1;color:#9ca3af}[role=button],button{cursor:pointer}:disabled{cursor:default}audio,canvas,embed,iframe,img,object,svg,video{display:block;vertical-align:middle}img,video{max-width:100%;height:auto}[hidden]:where(:not([hidden=until-found])){display:none}.container{width:100%}@media (min-width: 640px){.container{max-width:640px}}@media (min-width: 768px){.container{max-width:768px}}@media (min-width: 1024px){.container{max-width:1024px}}@media (min-width: 1280px){.container{max-width:1280px}}@media (min-width: 1536px){.container{max-width:1536px}}.mx-auto{margin-left:auto;margin-right:auto}.mb-12{margin-bottom:3rem}.mb-2{margin-bottom:0.5rem}.mb-3{margin-bottom:0.75rem}.mb-4{margin-bottom:1rem}.mb-6{margin-bottom:1.5rem}.mt-10{margin-top:2.5rem}.mt-2{margin-top:0.5rem}.mt-4{margin-top:1rem}.mt-6{margin-top:1.5rem}.mt-8{margin-top:2rem}.flex{display:flex}.grid{display:grid}.hidden{display:none}.h-72{height:18rem}.h-80{height:20rem}.max-w-2xl{max-width:42rem}.max-w-3xl{max-width:48rem}.max-w-lg{max-width:32rem}.max-w-md{max-width:28rem}.list-inside{list-style-position:inside}.list-disc{list-style-type:disc}.list-none{list-style-type:none}.grid-cols-1{grid-template-columns:repeat(1, minmax(0, 1fr))}.flex-col{flex-direction:column}.items-start{align-items:flex-start}.items-center{align-items:center}.justify-center{justify-content:center}.gap-4{gap:1rem}.gap-6{gap:1.5rem}.gap-8{gap:2rem}.space-y-1 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(0.25rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(0.25rem * var(--tw-space-y-reverse))}.space-y-2 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(0.5rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(0.5rem * var(--tw-space-y-reverse))}.space-y-3 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(0.75rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(0.75rem * var(--tw-space-y-reverse))}.space-y-6 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(1.5rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(1.5rem * var(--tw-space-y-reverse))}.rounded-lg{border-radius:0.5rem}.rounded-md{border-radius:0.375rem}.border{border-width:1px}.border-gray-300{--tw-border-opacity:1;border-color:rgb(209 213 219 / var(--tw-border-opacity, 1))}.bg-gray-100{--tw-bg-opacity:1;background-color:rgb(243 244 246 / var(--tw-bg-opacity, 1))}.bg-gray-200{--tw-bg-opacity:1;background-color:rgb(229 231 235 / var(--tw-bg-opacity, 1))}.p-2{padding:0.5rem}.p-4{padding:1rem}.p-6{padding:1.5rem}.\!px-4{padding-left:1rem !important;padding-right:1rem !important}.\!py-2{padding-top:0.5rem !important;padding-bottom:0.5rem !important}.px-6{padding-left:1.5rem;padding-right:1.5rem}.px-8{padding-left:2rem;padding-right:2rem}.py-12{padding-top:3rem;padding-bottom:3rem}.py-16{padding-top:4rem;padding-bottom:4rem}.py-3{padding-top:0.75rem;padding-bottom:0.75rem}.py-8{padding-top:2rem;padding-bottom:2rem}.text-left{text-align:left}.text-center{text-align:center}.\!text-base{font-size:1rem !important;line-height:1.5rem !important}.text-2xl{font-size:1.5rem;line-height:2rem}.text-3xl{font-size:1.875rem;line-height:2.25rem}.text-4xl{font-size:2.25rem;line-height:2.5rem}.text-lg{font-size:1.125rem;line-height:1.75rem}.text-sm{font-size:0.875rem;line-height:1.25rem}.text-xl{font-size:1.25rem;line-height:1.75rem}.font-bold{font-weight:700}.font-semibold{font-weight:600}.text-gray-300{--tw-text-opacity:1;color:rgb(209 213 219 / var(--tw-text-opacity, 1))}.text-gray-600{--tw-text-opacity:1;color:rgb(75 85 99 / var(--tw-text-opacity, 1))}.text-gray-700{--tw-text-opacity:1;color:rgb(55 65 81 / var(--tw-text-opacity, 1))}.text-white{--tw-text-opacity:1;color:rgb(255 255 255 / var(--tw-text-opacity, 1))}.shadow-sm{--tw-shadow:0 1px 2px 0 rgb(0 0 0 / 0.05);--tw-shadow-colored:0 1px 2px 0 var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.transition-colors{transition-property:color, background-color, border-color, fill, stroke, -webkit-text-decoration-color;transition-property:color, background-color, border-color, text-decoration-color, fill, stroke;transition-property:color, background-color, border-color, text-decoration-color, fill, stroke, -webkit-text-decoration-color;transition-timing-function:cubic-bezier(0.4, 0, 0.2, 1);transition-duration:150ms}.transition-shadow{transition-property:box-shadow;transition-timing-function:cubic-bezier(0.4, 0, 0.2, 1);transition-duration:150ms}.hover\:bg-opacity-80:hover{--tw-bg-opacity:0.8}.hover\:shadow-xl:hover{--tw-shadow:0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);--tw-shadow-colored:0 20px 25px -5px var(--tw-shadow-color), 0 8px 10px -6px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}@media (min-width: 640px){.sm\:grid-cols-2{grid-template-columns:repeat(2, minmax(0, 1fr))}.sm\:flex-row{flex-direction:row}}@media (min-width: 768px){.md\:h-80{height:20rem}.md\:h-96{height:24rem}.md\:grid-cols-2{grid-template-columns:repeat(2, minmax(0, 1fr))}.md\:grid-cols-3{grid-template-columns:repeat(3, minmax(0, 1fr))}.md\:text-2xl{font-size:1.5rem;line-height:2rem}.md\:text-5xl{font-size:3rem;line-height:1}}@media (min-width: 1024px){.lg\:grid-cols-3{grid-template-columns:repeat(3, minmax(0, 1fr))}.lg\:grid-cols-4{grid-template-columns:repeat(4, minmax(0, 1fr))}}</style></head>
+<body class="text-dark-blue">
+
+    <!-- 
+        Infographic Narrative Plan & Structure:
+        Theme: "The Future of Waste Management: Trends & Technologies"
+        Sections:
+        1. Header/Hero: The Imperative for Smart Waste Solutions
+        2. The Challenge: Inefficiencies in Traditional Waste Management
+        3. Key Technology Trends Driving Modernization (SWMS as a Case Study)
+            3.1 IoT Integration: The Eyes and Ears on the Ground
+            3.2 Data Analytics & Real-time Monitoring: From Data to Decisions
+            3.3 Cloud Deployment & Scalability: Future-Proofing Operations
+            3.4 Mobile Access & Contractor Empowerment: Enhancing Stakeholder Engagement
+            3.5 Automation in Core Operations: Streamlining the Waste Journey
+        4. Market Drivers & Tangible Benefits: Why Smart Waste Management Matters (Added Gemini Elaboration)
+        5. Adoption & Implementation Insights: Bringing Smart Systems to Life
+        6. The Road Ahead: Future Innovations in Waste Tech (Added Gemini Analysis)
+        7. Conclusion: Embracing a Smarter, More Sustainable Future
+
+        Visualization Choices Overview:
+        - Single Big Numbers, Donut Charts (Chart.js), Bar Charts (Chart.js), Stacked Bar Charts (Chart.js)
+        - Pictographs/Icons (Unicode + HTML/CSS for IoT, Mobile)
+        - Flow Chart (HTML/CSS for Automated Vehicle Journey)
+        - Timeline (HTML/CSS for Implementation Phases)
+        - Lists (HTML/CSS for Challenges, Future Tech)
+        - Gemini API Integration: For benefit elaboration and future trend analysis.
+        - NO SVG, NO MERMAID JS will be used. All diagrams are HTML/CSS or Chart.js Canvas.
+        - Color Palette: "Energetic & Playful" (#FF6B6B, #FFD166, #06D6A0, #118AB2, #073B4C)
+    -->
+
+    <header class="bg-dark-blue text-white py-16 px-6 text-center">
+        <h1 class="text-4xl md:text-5xl font-bold mb-4">The Future of Waste Management is Smart</h1>
+        <p class="text-xl md:text-2xl text-gray-300 max-w-3xl mx-auto">
+            Modernizing landfill operations and compliance oversight through intelligent, automated systems.
+            Discover the key trends and technologies transforming the waste industry for a more efficient and sustainable tomorrow.
+        </p>
+    </header>
+    <div class="px-4 mb-4 text-center">
+            <img src="https://i.imgur.com/0UlqDSN.png" alt="Sustainability Solutions" class="mx-auto h-20 w-auto">
+        </div>
+
+    <main class="container mx-auto p-6">
+        
+
+        <section id="challenge" class="py-12">
+            <h2 class="section-title">The Challenge: Overcoming Traditional Hurdles</h2>
+            <p class="section-subtitle">
+                Traditional waste management often grapples with inefficiencies, data inaccuracies, and compliance complexities. Smart systems address these by introducing automation and real-time insights.
+            </p>
+            <div class="grid md:grid-cols-2 gap-8 items-center">
+                <div class="card">
+                    <h3 class="text-2xl font-semibold text-dark-blue mb-3">Common Pain Points</h3>
+                    <ul class="list-disc list-inside space-y-2 text-gray-700">
+                        <li>Manual vehicle logging and weighbridge operations leading to errors and delays.</li>
+                        <li>Difficulties in real-time compliance monitoring and violation detection.</li>
+                        <li>Lack of transparency for contractors and stakeholders.</li>
+                        <li>Inefficient financial reconciliation and potential revenue leakage.</li>
+                        <li>Limited data for strategic decision-making and operational optimization.</li>
+                        <li>Challenges in managing multiple sites with consistent standards.</li>
+                    </ul>
+                </div>
+                <div class="card bg-blue text-dark-blue mb-3">
+                    <h3 class="text-2xl font-semibold mb-3">The Smart Solution Imperative</h3>
+                    <p class="mb-2">To address these challenges, the industry is rapidly moving towards integrated Smart Waste Management Systems (SWMS).</p>
+                    <p>These systems aim to:</p>
+                    <ul class="list-disc list-inside space-y-1 mt-2">
+                        <li>Automate and streamline operations.</li>
+                        <li>Enhance data accuracy and accessibility.</li>
+                        <li>Improve regulatory compliance and reporting.</li>
+                        <li>Empower stakeholders with self-service tools.</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <section id="tech-trends" class="py-12 bg-gray-100 rounded-lg">
+            <h2 class="section-title">Key Technology Trends Driving Modernization</h2>
+            <p class="section-subtitle">
+                The evolution of waste management is powered by a suite of interconnected technologies. These trends are central to building efficient, scalable, and compliant operations, as exemplified by modern SWMS architectures.
+            </p>
+
+            <div class="card mb-12">
+                <h3 class="text-2xl font-semibold text-dark-blue mb-4 text-center">3.1 IoT Integration: The Eyes and Ears on the Ground</h3>
+                <p class="text-gray-700 mb-6 text-center max-w-2xl mx-auto">Internet of Things (IoT) devices provide the crucial real-world data that fuels smart systems, automating capture and reducing manual intervention.</p>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 text-center">
+                    <div>
+                        <span class="icon-placeholder bg-coral text-white">📷</span>
+                        <h4 class="font-semibold mt-2 text-lg text-dark-blue">LPR Cameras</h4>
+                        <p class="text-sm text-gray-600">Automated vehicle identification via License Plate Recognition.</p>
+                    </div>
+                    <div>
+                        <span class="icon-placeholder bg-yellow text-dark-blue">📡</span>
+                        <h4 class="font-semibold mt-2 text-lg text-dark-blue">RFID Readers</h4>
+                        <p class="text-sm text-gray-600">Contactless identification using RFID tags for vehicles or bins.</p>
+                    </div>
+                    <div>
+                        <span class="icon-placeholder bg-green-teal text-white">⚖️</span>
+                        <h4 class="font-semibold mt-2 text-lg text-dark-blue">Smart Weighbridges</h4>
+                        <p class="text-sm text-gray-600">Digital weighbridge indicators for automatic weight capture.</p>
+                    </div>
+                    <div>
+                        <span class="icon-placeholder bg-blue text-white">🚧</span>
+                        <h4 class="font-semibold mt-2 text-lg text-dark-blue">Automated Barriers</h4>
+                        <p class="text-sm text-gray-600">Controlled site access integrated with identification systems.</p>
+                    </div>
+                </div>
+                 <p class="text-gray-700 mt-6 text-center max-w-3xl mx-auto">
+                    These devices enable seamless data flow, from vehicle arrival and identification (LPR/RFID) to precise weight measurement (Weighbridges) and controlled site access (Barriers), forming the backbone of automated landfill operations.
+                </p>
+            </div>
+
+            <div class="card mb-12">
+                <h3 class="text-2xl font-semibold text-dark-blue mb-4 text-center">3.2 Data Analytics &amp; Real-time Monitoring: From Data to Decisions</h3>
+                 <p class="text-gray-700 mb-6 text-center max-w-2xl mx-auto">Centralized platforms transform raw operational data into actionable insights through real-time dashboards and comprehensive reporting, enabling proactive management and strategic planning.</p>
+                <div class="grid md:grid-cols-2 gap-8 items-center">
+                    <div>
+                        <h4 class="text-xl font-semibold text-dark-blue mb-3">Key Monitored Metrics</h4>
+                        <p class="text-gray-600 mb-4">Smart systems provide instant visibility into critical operational aspects, allowing for immediate response and informed decision-making. Key areas include:</p>
+                        <ul class="list-disc list-inside space-y-2 text-gray-700">
+                            <li>Waste Volumes &amp; Types: Tracking inflow and composition.</li>
+                            <li>Vehicle Activity: Monitoring throughput and turnaround times.</li>
+                            <li>Contractor Compliance: Ensuring adherence to regulations and agreements.</li>
+                            <li>Revenue &amp; Financials: Real-time fee calculation and wallet status.</li>
+                            <li>Equipment Status: Health monitoring of integrated IoT devices.</li>
+                        </ul>
+                    </div>
+                    <div class="chart-container h-72 md:h-80 max-w-md">
+                        <canvas id="dataMonitoringChart" width="448" height="320" style="display: block; box-sizing: border-box; height: 320px; width: 448px;"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card mb-12">
+                <h3 class="text-2xl font-semibold text-dark-blue mb-4 text-center">3.3 Cloud Deployment &amp; Scalability: Future-Proofing Operations</h3>
+                <p class="text-gray-700 mb-6 text-center max-w-2xl mx-auto">Modern SWMS leverage cloud infrastructure (like GCP, AWS, Azure) and microservices architecture to ensure high availability, robust scalability, and operational flexibility.</p>
+                <div class="grid md:grid-cols-2 gap-8 items-center">
+                     <div class="chart-container h-72 md:h-80 max-w-md">
+                        <canvas id="scalabilityChart" width="448" height="320" style="display: block; box-sizing: border-box; height: 320px; width: 448px;"></canvas>
+                    </div>
+                    <div>
+                        <h4 class="text-xl font-semibold text-dark-blue mb-3">Advantages of Cloud &amp; Microservices</h4>
+                         <ul class="list-disc list-inside space-y-2 text-gray-700">
+                            <li>**Scalability on Demand:** Easily scale resources up or down to handle fluctuating loads (e.g., supporting 10,000+ concurrent users and 50,000+ transactions/hour).</li>
+                            <li>**High Availability:** Cloud platforms offer robust infrastructure reducing downtime.</li>
+                            <li>**Resilience:** Microservices ensure that failure in one component doesn't cripple the entire system.</li>
+                            <li>**Faster Development Cycles:** Independent deployment of services speeds up feature releases.</li>
+                            <li>**Reduced Infrastructure Overhead:** Managed cloud services decrease the burden of hardware maintenance.</li>
+                            <li>**Global Accessibility:** Access the system from anywhere, facilitating multi-site management.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card mb-12">
+                <h3 class="text-2xl font-semibold text-dark-blue mb-4 text-center">3.4 Mobile Access &amp; Contractor Empowerment</h3>
+                <p class="text-gray-700 mb-6 text-center max-w-2xl mx-auto">Dedicated contractor portals (web and mobile apps using technologies like Next.js and Flutter) are crucial for enhancing transparency and efficiency in stakeholder interactions.</p>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-center items-start">
+                    <div class="p-4">
+                        <span class="icon-placeholder bg-green-teal text-white">📱</span>
+                        <h4 class="font-semibold mt-2 text-lg text-dark-blue">Mobile Applications</h4>
+                        <p class="text-sm text-gray-600">On-the-go access for transporters and contractors to view trip details, wallet balances, and receive notifications.</p>
+                    </div>
+                    <div class="p-4">
+                         <span class="icon-placeholder bg-blue text-white">💻</span>
+                        <h4 class="font-semibold mt-2 text-lg text-dark-blue">Web Portals</h4>
+                        <p class="text-sm text-gray-600">Comprehensive self-service platforms for account management, vehicle registration, reporting, and support requests.</p>
+                    </div>
+                     <div class="p-4">
+                        <h4 class="font-semibold text-lg text-dark-blue mt-10">Key Contractor Features:</h4>
+                        <ul class="list-none space-y-1 text-sm text-gray-600 mt-2">
+                            <li>Online Registration &amp; Document Submission</li>
+                            <li>Digital Wallet &amp; Payment Management</li>
+                            <li>Real-time Trip History &amp; Reporting</li>
+                            <li>Support &amp; Communication Channels</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card mb-12">
+                <h3 class="text-2xl font-semibold text-dark-blue mb-4 text-center">3.5 Automation in Core Operations: Streamlining the Waste Journey</h3>
+                <p class="text-gray-700 mb-6 text-center max-w-2xl mx-auto">Automation is key to reducing manual effort, minimizing errors, and speeding up the entire waste handling process from site entry to exit.</p>
+                <h4 class="text-xl font-semibold text-dark-blue mb-4 text-center">Simplified Automated Vehicle Journey</h4>
+                <div class="flex flex-col items-center">
+                    <div class="flowchart-step">1. Vehicle Arrival &amp; ID (LPR/RFID)</div>
+                    <div class="flowchart-arrow">▼</div>
+                    <div class="flowchart-step">2. Automated Gate Entry</div>
+                    <div class="flowchart-arrow">▼</div>
+                    <div class="flowchart-step">3. Weigh-In (Automated Capture)</div>
+                    <div class="flowchart-arrow">▼</div>
+                    <div class="flowchart-step">4. Waste Disposal</div>
+                    <div class="flowchart-arrow">▼</div>
+                    <div class="flowchart-step">5. Weigh-Out (Automated Capture)</div>
+                    <div class="flowchart-arrow">▼</div>
+                    <div class="flowchart-step">6. Fee Calculation &amp; Wallet Deduction</div>
+                    <div class="flowchart-arrow">▼</div>
+                    <div class="flowchart-step">7. Automated Gate Exit</div>
+                </div>
+                <p class="text-gray-700 mt-6 text-center max-w-3xl mx-auto">
+                    This automated flow, powered by integrated IoT devices and intelligent system logic, significantly enhances throughput and data accuracy for each vehicle trip.
+                </p>
+            </div>
+
+        </section>
+
+        <section id="benefits" class="py-12">
+            <h2 class="section-title">Market Drivers &amp; Tangible Benefits</h2>
+            <p class="section-subtitle">
+                The adoption of Smart Waste Management Systems is driven by the compelling need for operational excellence, regulatory adherence, and financial optimization. These systems deliver measurable improvements across the board.
+            </p>
+            <div class="grid md:grid-cols-2 gap-8 items-start">
+                <div>
+                    <h3 class="text-xl font-semibold text-dark-blue mb-3">Key Benefits Realized:</h3>
+                    <ul class="list-disc list-inside space-y-3 text-gray-700">
+                        <li>
+                            <span>**Operational Efficiency:** Significant reduction in vehicle processing times, labor costs, and human error through automation.</span>
+                            <button class="gemini-btn" onclick="handleBenefitElaboration(&#39;Operational Efficiency in SWMS: reduction in vehicle processing times, labor costs, and human error through automation.&#39;, &#39;benefitResponse1&#39;)">✨ Elaborate</button>
+                            <div id="benefitResponse1" class="gemini-response hidden"></div>
+                        </li>
+                        <li>
+                            <span>**Enhanced Compliance:** Improved adherence to environmental regulations with accurate data, audit trails, and real-time violation alerts. Facilitates reporting to bodies like Madinati.sa.</span>
+                            <button class="gemini-btn" onclick="handleBenefitElaboration(&#39;Enhanced Compliance in SWMS: Improved adherence to environmental regulations with accurate data, audit trails, and real-time violation alerts.&#39;, &#39;benefitResponse2&#39;)">✨ Elaborate</button>
+                            <div id="benefitResponse2" class="gemini-response hidden"></div>
+                        </li>
+                        <li>
+                            <span>**Financial Optimization:** Minimized revenue leakage via accurate fee calculation, automated billing, and transparent contractor wallet management.</span>
+                            <button class="gemini-btn" onclick="handleBenefitElaboration(&#39;Financial Optimization in SWMS: Minimized revenue leakage via accurate fee calculation, automated billing, and transparent contractor wallet management.&#39;, &#39;benefitResponse3&#39;)">✨ Elaborate</button>
+                            <div id="benefitResponse3" class="gemini-response hidden"></div>
+                        </li>
+                        <li>
+                            <span>**Improved Stakeholder Engagement:** Greater transparency and self-service capabilities for contractors, leading to better relationships.</span>
+                             <button class="gemini-btn" onclick="handleBenefitElaboration(&#39;Improved Stakeholder Engagement in SWMS: Greater transparency and self-service capabilities for contractors.&#39;, &#39;benefitResponse4&#39;)">✨ Elaborate</button>
+                            <div id="benefitResponse4" class="gemini-response hidden"></div>
+                        </li>
+                         <li>
+                            <span>**Data-Driven Insights:** Access to comprehensive data for strategic planning, performance benchmarking, and continuous improvement.</span>
+                             <button class="gemini-btn" onclick="handleBenefitElaboration(&#39;Data-Driven Insights from SWMS: Access to comprehensive data for strategic planning and continuous improvement.&#39;, &#39;benefitResponse5&#39;)">✨ Elaborate</button>
+                            <div id="benefitResponse5" class="gemini-response hidden"></div>
+                        </li>
+                    </ul>
+                </div>
+                <div class="chart-container h-80 md:h-96 max-w-lg">
+                    <canvas id="benefitsImpactChart" width="512" height="384" style="display: block; box-sizing: border-box; height: 384px; width: 512px;"></canvas>
+                </div>
+            </div>
+        </section>
+
+        <section id="implementation" class="py-12 bg-gray-100 rounded-lg">
+            <h2 class="section-title">Adoption &amp; Implementation Insights</h2>
+            <p class="section-subtitle">
+                Successfully deploying a Smart Waste Management System involves careful planning, phased execution, and ongoing support.
+            </p>
+            <div class="grid md:grid-cols-2 gap-8 items-start">
+                <div class="card">
+                    <h3 class="text-xl font-semibold text-dark-blue mb-4">Typical Implementation Timeline (Example: 13 Weeks)</h3>
+                    <div class="timeline-item">
+                        <div class="timeline-dot"></div>
+                        <div class="timeline-content">
+                            <h3>Week 1: Requirements Validation</h3>
+                            <p>Finalize detailed requirements, review integrations.</p>
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-dot"></div>
+                        <div class="timeline-content">
+                            <h3>Weeks 2-3: System Design &amp; Architecture</h3>
+                            <p>UI/UX design, ERD, DFD development, tech stack validation.</p>
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-dot"></div>
+                        <div class="timeline-content">
+                            <h3>Weeks 4-10: Development Phase</h3>
+                            <p>Full system development, device integration, unit testing.</p>
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-dot"></div>
+                        <div class="timeline-content">
+                            <h3>Weeks 11-12: QA &amp; Testing</h3>
+                            <p>Functional testing, load testing, device simulation.</p>
+                        </div>
+                    </div>
+                    <div class="timeline-item" style="border-left: 3px solid transparent;"> <div class="timeline-dot"></div>
+                        <div class="timeline-content">
+                            <h3>Week 13: Deployment &amp; Go-Live</h3>
+                            <p>Final deployment, end-user training, system launch.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="space-y-6">
+                    <div class="card text-center">
+                        <div class="stat-number text-green-teal">12+</div>
+                        <div class="stat-label">Months of Comprehensive Post-Launch Support Typically Provided</div>
+                        <p class="text-sm text-gray-600 mt-2">Ensuring smooth operations, bug fixing, minor enhancements, and performance tuning.</p>
+                    </div>
+                    <div class="card">
+                        <h3 class="text-xl font-semibold text-dark-blue mb-3">Key Success Factors:</h3>
+                        <ul class="list-disc list-inside space-y-1 text-gray-700 text-sm">
+                            <li>Clear definition of requirements and scope.</li>
+                            <li>Strong project management (PMP, Agile methodologies).</li>
+                            <li>Robust DevOps practices for CI/CD.</li>
+                            <li>Open communication with all stakeholders.</li>
+                            <li>Thorough testing and quality assurance.</li>
+                            <li>Comprehensive user training and documentation.</li>
+                            <li>Selection of reliable hardware with open integration capabilities.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="future-outlook" class="py-12">
+            <h2 class="section-title">The Road Ahead: Future Innovations in Waste Tech</h2>
+            <p class="section-subtitle">
+                The smart waste management sector is continuously evolving, with exciting advancements on the horizon set to further optimize processes and enhance sustainability.
+            </p>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div class="card hover:shadow-xl transition-shadow">
+                    <h3 class="text-xl font-semibold text-blue mb-2">AI &amp; Machine Learning</h3>
+                    <p class="text-gray-600 text-sm">Predictive analytics for waste volumes, optimized routing, anomaly detection in waste streams, and forecasting equipment maintenance needs.</p>
+                </div>
+                <div class="card hover:shadow-xl transition-shadow">
+                    <h3 class="text-xl font-semibold text-green-teal mb-2">Enhanced IoT &amp; Sensors</h3>
+                    <p class="text-gray-600 text-sm">Smart bins with fill-level sensors, environmental sensors for monitoring air/water quality, and advanced drone-based site surveys.</p>
+                </div>
+                <div class="card hover:shadow-xl transition-shadow">
+                    <h3 class="text-xl font-semibold text-coral mb-2">Blockchain Technology</h3>
+                    <p class="text-gray-600 text-sm">Increased transparency and traceability for hazardous waste or high-value recycled materials, ensuring chain of custody.</p>
+                </div>
+                <div class="card hover:shadow-xl transition-shadow">
+                    <h3 class="text-xl font-semibold text-yellow text-dark-blue mb-2">Advanced Robotics</h3>
+                    <p class="text-gray-600 text-sm">Automated sorting facilities, robotic arms for handling specific waste types, and autonomous vehicles for on-site logistics.</p>
+                </div>
+                <div class="card hover:shadow-xl transition-shadow">
+                    <h3 class="text-xl font-semibold text-blue mb-2">Circular Economy Integration</h3>
+                    <p class="text-gray-600 text-sm">Systems designed to better support circular economy principles, facilitating material reuse and waste-to-value processes.</p>
+                </div>
+                <div class="card hover:shadow-xl transition-shadow">
+                    <h3 class="text-xl font-semibold text-green-teal mb-2">Gamification &amp; PWA</h3>
+                    <p class="text-gray-600 text-sm">Engaging contractors through gamified compliance and efficiency incentives; Progressive Web Apps for enhanced offline access.</p>
+                </div>
+            </div>
+            <div class="mt-8 text-center card">
+                <h3 class="text-xl font-semibold text-dark-blue mb-3">Explore Future Trends Further</h3>
+                <p class="text-gray-600 mb-4">Select a trend to get a brief AI-powered analysis of its potential impact.</p>
+                <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
+                    <select id="futureTrendSelector" class="p-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue focus:border-blue text-dark-blue">
+                        <option value="AI &amp; Machine Learning">AI &amp; Machine Learning</option>
+                        <option value="Enhanced IoT &amp; Sensors">Enhanced IoT &amp; Sensors</option>
+                        <option value="Blockchain Technology">Blockchain Technology</option>
+                        <option value="Advanced Robotics">Advanced Robotics</option>
+                        <option value="Circular Economy Integration">Circular Economy Integration</option>
+                        <option value="Gamification &amp; PWA">Gamification &amp; PWA</option>
+                    </select>
+                    <button class="gemini-btn !text-base !py-2 !px-4" onclick="handleFutureTrendAnalysis()">✨ Analyze Trend</button>
+                </div>
+                <div id="futureTrendResponse" class="gemini-response hidden mt-4 text-left"></div>
+            </div>
+        </section>
+
+        <section class="py-16 bg-dark-blue text-white text-center">
+            <h2 class="text-3xl font-bold mb-4">Embracing a Smarter, More Sustainable Future</h2>
+            <p class="text-lg text-gray-300 max-w-3xl mx-auto mb-6">
+                The transition to Smart Waste Management Systems represents a pivotal shift towards more efficient, compliant, and environmentally responsible operations. By leveraging technology, data, and automation, the industry is poised to meet contemporary challenges and build a sustainable foundation for generations to come.
+            </p>
+            <a href="file:///C:/Users/tayeb.m/OneDrive%20-%20Saudi%20Investment%20Recycling%20Company%20(SIRC)/Documents/SWMS/SWMS%20Industry%20Trends%20&amp;%20Technology.html#tech-trends" class="bg-green-teal hover:bg-opacity-80 text-white font-semibold py-3 px-8 rounded-lg text-lg transition-colors">
+                Explore Key Technologies
+            </a>
+        </section>
+    </main>
+
+    <footer class="text-center py-8 bg-gray-200 text-dark-gray text-sm">
+        <p>© 2025 SSC Industry Insights. All rights reserved.</p>
+        <p>Data derived from industry analysis and system specifications for Smart Waste Management Systems.</p>
+    </footer>
+
+    <script>
+        function processLabels(labels, maxLength = 16) {
+            return labels.map(label => {
+                if (typeof label === 'string' && label.length > maxLength) {
+                    const words = label.split(' ');
+                    const lines = [];
+                    let currentLine = '';
+                    words.forEach(word => {
+                        if ((currentLine + ' ' + word).trim().length <= maxLength) {
+                            currentLine = (currentLine + ' ' + word).trim();
+                        } else {
+                            lines.push(currentLine);
+                            currentLine = word;
+                        }
+                    });
+                    lines.push(currentLine);
+                    return lines;
+                }
+                return label;
+            });
+        }
+
+        const commonTooltipTitleCallback = function(tooltipItems) {
+            const item = tooltipItems[0];
+            let label = item.chart.data.labels[item.dataIndex];
+            if (Array.isArray(label)) {
+              return label.join(' ');
+            } else {
+              return label;
+            }
+        };
+
+        const dataMonitoringCtx = document.getElementById('dataMonitoringChart').getContext('2d');
+        new Chart(dataMonitoringCtx, {
+            type: 'doughnut',
+            data: {
+                labels: processLabels(['Waste Volumes', 'Vehicle Activity', 'Contractor Compliance', 'Revenue Tracking', 'Equipment Status']),
+                datasets: [{
+                    label: 'Key Monitored Metrics',
+                    data: [30, 25, 20, 15, 10], 
+                    backgroundColor: ['#06D6A0', '#118AB2', '#FFD166', '#FF6B6B', '#073B4C'],
+                    borderColor: '#FFFFFF', borderWidth: 2
+                }]
+            },
+            options: {
+                responsive: true, maintainAspectRatio: false,
+                plugins: {
+                    legend: { position: 'bottom', labels: { color: '#073B4C' } },
+                    title: { display: true, text: 'Distribution of Monitored Data Points', color: '#073B4C', font: { size: 16 } },
+                    tooltip: { callbacks: { title: commonTooltipTitleCallback } }
+                }
+            }
+        });
+
+        const scalabilityCtx = document.getElementById('scalabilityChart').getContext('2d');
+        new Chart(scalabilityCtx, {
+            type: 'bar',
+            data: {
+                labels: processLabels(['Concurrent Users', 'Transactions / Hour', 'Weighbridge Ops / Min']),
+                datasets: [{
+                    label: 'System Capacity Targets',
+                    data: [10000, 50000, 200], 
+                    backgroundColor: ['#118AB2', '#06D6A0', '#FFD166'],
+                    borderColor: ['#073B4C', '#073B4C', '#073B4C'], borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true, maintainAspectRatio: false, indexAxis: 'y',
+                scales: {
+                    x: { beginAtZero: true, ticks: { color: '#073B4C' }, grid: { color: '#E2E8F0' } },
+                    y: { ticks: { color: '#073B4C' }, grid: { display: false } }
+                },
+                plugins: {
+                    legend: { display: false },
+                    title: { display: true, text: 'SWMS Scalability Targets', color: '#073B4C', font: { size: 16 } },
+                    tooltip: { callbacks: { title: commonTooltipTitleCallback } }
+                }
+            }
+        });
+        
+        const benefitsImpactCtx = document.getElementById('benefitsImpactChart').getContext('2d');
+        new Chart(benefitsImpactCtx, {
+            type: 'bar',
+            data: {
+                labels: processLabels(['Operational Efficiency', 'Regulatory Compliance', 'Financial Optimization', 'Stakeholder Engagement']),
+                datasets: [
+                    { label: 'Direct Impact', data: [70, 85, 75, 65], backgroundColor: '#06D6A0'},
+                    { label: 'Indirect Benefits', data: [20, 10, 15, 25], backgroundColor: '#118AB2'}
+                ]
+            },
+            options: {
+                responsive: true, maintainAspectRatio: false,
+                scales: {
+                    x: { stacked: true, ticks: { color: '#073B4C' }, grid: { display: false } },
+                    y: { stacked: true, beginAtZero: true, max: 100, ticks: { color: '#073B4C', callback: function(value) { return value + "%"} }, grid: { color: '#E2E8F0' } }
+                },
+                plugins: {
+                    legend: { position: 'top', labels: { color: '#073B4C' } },
+                    title: { display: true, text: 'Impact Areas of Smart Waste Management (Illustrative %)', color: '#073B4C', font: { size: 16 } },
+                    tooltip: { mode: 'index', intersect: false, callbacks: { title: commonTooltipTitleCallback } }
+                }
+            }
+        });
+
+        async function callGeminiAPI(prompt) {
+            let chatHistory = [{ role: "user", parts: [{ text: prompt }] }];
+            const payload = { contents: chatHistory };
+            const apiKey = "AIzaSyB8ZcRaa7ldiVC2Ex4BAKVKkMxoizSILro"; 
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+            
+            try {
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    console.error("Gemini API Error:", errorData);
+                    return `Error: ${errorData.error?.message || response.statusText}`;
+                }
+                const result = await response.json();
+                if (result.candidates && result.candidates.length > 0 &&
+                    result.candidates[0].content && result.candidates[0].content.parts &&
+                    result.candidates[0].content.parts.length > 0) {
+                    return result.candidates[0].content.parts[0].text;
+                } else {
+                    console.error("Unexpected Gemini API response structure:", result);
+                    return "No content received from AI.";
+                }
+            } catch (error) {
+                console.error("Fetch error:", error);
+                return "Failed to fetch response from AI.";
+            }
+        }
+
+        async function handleBenefitElaboration(benefitText, responseElementId) {
+            const responseDiv = document.getElementById(responseElementId);
+            if (!responseDiv) return;
+
+            responseDiv.classList.remove('hidden');
+            responseDiv.innerHTML = '<em>Loading elaboration... ✨</em>';
+
+            const prompt = `Based on Smart Waste Management Systems, elaborate concisely (2-3 sentences) on the following benefit: "${benefitText}". Explain how this benefit is typically achieved or its key impact.`;
+            const elaboration = await callGeminiAPI(prompt);
+            responseDiv.innerHTML = elaboration.replace(/\n/g, '<br>');
+        }
+
+        async function handleFutureTrendAnalysis() {
+            const trendSelector = document.getElementById('futureTrendSelector');
+            const selectedTrend = trendSelector.value;
+            const responseDiv = document.getElementById('futureTrendResponse');
+
+            if (!selectedTrend || !responseDiv) return;
+
+            responseDiv.classList.remove('hidden');
+            responseDiv.innerHTML = `<em>Analyzing ${selectedTrend}... ✨</em>`;
+            
+            const prompt = `Analyze the future trend of "${selectedTrend}" in the context of Smart Waste Management. Provide a brief analysis (3-4 sentences) of its potential impact and key developments.`;
+            const analysis = await callGeminiAPI(prompt);
+            responseDiv.innerHTML = analysis.replace(/\n/g, '<br>');
+        }
+
+    </script>
+
+
+</body></html>
