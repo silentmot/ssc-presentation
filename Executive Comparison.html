@@ -640,10 +640,70 @@
             observer.observe(el);
         });
 
-        // --- Gemini API Integration ---
-        const apiKey = "AIzaSyB8ZcRaa7ldiVC2Ex4BAKVKkMxoizSILro"; // Per instructions, leave empty for Canvas environment
-        const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+// Inside your enhanceBtn click listener
+// const originalPrompt = ...
+// const otherOptions = ...
 
+// Instead of fetching Gemini API directly:
+// fetch(`https://generativelanguage.googleapis.com/...key=${apiKey}`, { ... })
+
+// Fetch your Netlify function:
+fetch('/.netlify/functions/enhance-prompt', {
+    method: 'POST',
+    headers: {
+        'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+        originalPrompt: originalPrompt, // Send the prompt to your function
+        // any other options your function might need
+        language: optimizedLanguageEl.value,
+        numVariations: parseInt(diversifyOptimizationEl.value) || 1,
+        // Send selected engines if your proxy needs to tailor API calls
+        // selectedEngines: Array.from(selectedAiEngines), 
+        // engineDetails: engineDetails // (You'd need to reconstruct or send necessary parts of engineDetails)
+    })
+})
+.then(response => {
+    if (!response.ok) {
+        // Handle HTTP errors from your function, e.g., 500, 400
+        return response.json().then(err => { throw new Error(err.error || `Request to proxy failed with status ${response.status}`) });
+    }
+    return response.json();
+})
+.then(data => {
+    // 'data' is the response from your serverless function,
+    // which should contain the enhanced prompt from Gemini
+    // e.g., if your function returns { enhancedPrompt: "..." }
+    // then you'd use data.enhancedPrompt
+    const enhancedText = data.enhancedPrompt; // Adjust based on your function's response structure
+
+    // Update currentResults and renderResults as before
+    // Make sure the structure of 'data' matches what renderResults expects
+    // For example:
+    currentResults.push({
+        original: originalPrompt, // Or whatever you based the enhancement on
+        enhanced: enhancedText,
+        // engineId: /* you might get this back from your proxy too, or set it based on the request */,
+        engineName: data.engineName || "Proxy Enhanced", // Adjust as needed
+        // variation: ... ,
+        // totalVariationsForEngine: ...,
+        isError: data.isError || false
+    });
+    // ... then call renderResults()
+    renderResults(); // You'll likely adapt renderResults based on the new flow
+})
+.catch(error => {
+    console.error('Error calling proxy function:', error);
+    showMessage(`Error: ${error.message}`);
+    // Handle error display
+    currentResults.push({
+        original: originalPrompt,
+        enhanced: `Error communicating with enhancement service: ${error.message}`,
+        engineName: "Error",
+        isError: true
+    });
+    renderResults();
+});
         // Function to call Gemini API
         async function callGeminiAPI(prompt) {
             const payload = {
