@@ -1,0 +1,759 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prompt Enhancer</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #111827; /* bg-gray-900 */
+            color: #D1D5DB; /* text-gray-300 */
+            overscroll-behavior: none;
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #374151; /* bg-gray-700 */
+            border-radius: 3px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #6B7280; /* bg-gray-500 */
+            border-radius: 3px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: #9CA3AF; /* bg-gray-400 */
+        }
+        .glassmorphism {
+            background: rgba(31, 41, 55, 0.6); /* bg-gray-800 with opacity */
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(55, 65, 81, 0.3); /* border-gray-700 with opacity */
+        }
+        .dropdown-enter {
+            opacity: 0;
+            transform: translateY(-10px) scale(0.95);
+        }
+        .dropdown-enter-active {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+            transition: opacity 200ms ease-out, transform 200ms ease-out;
+        }
+        .dropdown-leave {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+        .dropdown-leave-active {
+            opacity: 0;
+            transform: translateY(-10px) scale(0.95);
+            transition: opacity 150ms ease-in, transform 150ms ease-in;
+        }
+        .tab-active {
+            background-color: #4F46E5; /* bg-indigo-600 */
+            color: white;
+        }
+        .btn-primary {
+            background-color: #4F46E5; /* bg-indigo-600 */
+            color: white;
+            transition: background-color 0.2s ease;
+        }
+        .btn-primary:hover {
+            background-color: #4338CA; /* bg-indigo-700 */
+        }
+        .btn-secondary {
+            background-color: #374151; /* bg-gray-700 */
+            color: #D1D5DB; /* text-gray-300 */
+            transition: background-color 0.2s ease;
+        }
+        .btn-secondary:hover {
+            background-color: #4B5563; /* bg-gray-600 */
+        }
+        .loader {
+            border: 4px solid #4B5563; /* border-gray-600 */
+            border-top: 4px solid #4F46E5; /* border-indigo-600 */
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        [data-tooltip]:hover::after {
+            content: attr(data-tooltip);
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%) translateY(-5px);
+            background-color: #1F2937; /* bg-gray-800 */
+            color: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            white-space: nowrap;
+            z-index: 10;
+        }
+        .checkbox-custom:checked {
+            background-image: url("data:image/svg+xml,%3csvg viewBox='0 0 16 16' fill='white' xmlns='http://www.w3.org/2000/svg'%3e%3cpath d='M12.207 4.793a1 1 0 010 1.414l-5 5a1 1 0 01-1.414 0l-2-2a1 1 0 011.414-1.414L6.5 9.086l4.293-4.293a1 1 0 011.414 0z'/%3e%3c/svg%3e");
+            background-color: #4F46E5; /* bg-indigo-600 */
+            border-color: #4F46E5; /* border-indigo-600 */
+        }
+        .glowing-border {
+            position: relative;
+        }
+        .glowing-border::before {
+            content: '';
+            position: absolute;
+            top: -2px; left: -2px; right: -2px; bottom: -2px;
+            background: conic-gradient(from 90deg at 50% 50%, #4F46E5, #A78BFA, #EC4899, #F59E0B, #34D399, #4F46E5);
+            border-radius: calc(0.5rem + 2px); /* Match textarea border-radius + border width */
+            z-index: -1;
+            opacity: 0;
+            transition: opacity 0.3s ease-in-out;
+        }
+        .glowing-border:focus-within::before {
+            opacity: 0.6;
+            animation: glowRotate 4s linear infinite;
+        }
+        @keyframes glowRotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col items-center justify-center p-4 selection:bg-indigo-500 selection:text-white">
+
+    <div class="w-full max-w-4xl mx-auto bg-gray-800 shadow-2xl rounded-lg p-6 md:p-8 space-y-6">
+        <header class="text-center">
+            <h1 class="text-3xl md:text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-pink-500 to-red-500">
+                Prompt Auto-Tune
+            </h1>
+            <p class="text-gray-400 mt-2 text-sm md:text-base">Enhance your prompts with AI for superior results.</p>
+        </header>
+
+        <div class="space-y-4">
+            <label for="originalPrompt" class="block text-sm font-medium text-gray-300">Original Prompt</label>
+            <div class="glowing-border rounded-lg">
+                <textarea id="originalPrompt" rows="5"
+                    class="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-shadow duration-200 resize-none custom-scrollbar placeholder-gray-500"
+                    placeholder="e.g., A serene landscape painting of a mountain range at sunset..."></textarea>
+            </div>
+        </div>
+
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <div class="relative">
+                <button id="aiEngineSelectorBtn" type="button"
+                    class="w-full sm:w-auto flex items-center justify-center gap-2 px-4 py-2.5 bg-gray-700 hover:bg-gray-600 text-gray-200 rounded-lg shadow transition-colors duration-150">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path><path d="M12 11v0M12 7v0M12 15v0M7 13v0M17 13v0"></path></svg>
+                    <span id="selectedEnginesText">Select AI Engines</span>
+                    <svg class="w-4 h-4 ml-1 transition-transform duration-200" id="aiEngineCaret" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" /></svg>
+                </button>
+                <div id="aiEngineDropdown"
+                    class="absolute z-20 mt-2 w-80 sm:w-96 max-h-96 overflow-y-auto custom-scrollbar glassmorphism rounded-lg shadow-xl p-4 origin-top-left hidden dropdown-enter">
+                    <div class="mb-3">
+                        <div class="flex border-b border-gray-600">
+                            <button data-tab="textModels" class="ai-model-tab flex-1 py-2 px-3 text-sm font-medium text-center text-gray-400 hover:text-gray-200 focus:outline-none tab-active">Text Models</button>
+                            <button data-tab="imageModels" class="ai-model-tab flex-1 py-2 px-3 text-sm font-medium text-center text-gray-400 hover:text-gray-200 focus:outline-none">Image Models</button>
+                        </div>
+                    </div>
+                    <div id="textModelsContainer" class="space-y-3">
+                        </div>
+                    <div id="imageModelsContainer" class="space-y-3 hidden">
+                        </div>
+                </div>
+            </div>
+
+            <div class="relative">
+                <button id="addOnsBtn" type="button"
+                    class="w-full sm:w-auto flex items-center justify-center gap-2 px-4 py-2.5 bg-gray-700 hover:bg-gray-600 text-gray-200 rounded-lg shadow transition-colors duration-150">
+                     <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20V10"/><path d="M12 20l-4-4"/><path d="M12 20l4-4"/><path d="M5 8V4h14v4"/><path d="M5 8h14"/></svg>
+                    <span>Add-ons</span>
+                     <svg class="w-4 h-4 ml-1 transition-transform duration-200" id="addOnsCaret" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" /></svg>
+                </button>
+                <div id="addOnsDropdown"
+                    class="absolute z-20 mt-2 w-full sm:w-80 right-0 glassmorphism rounded-lg shadow-xl p-4 space-y-4 origin-top-right hidden dropdown-enter">
+                    <div class="flex items-center justify-between">
+                        <label for="previewToggle" class="text-sm text-gray-300 flex items-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-2"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
+                            Preview Output
+                        </label>
+                        <label class="relative inline-flex items-center cursor-pointer">
+                            <input type="checkbox" id="previewToggle" class="sr-only peer">
+                            <div class="w-11 h-6 bg-gray-600 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-indigo-500 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-indigo-600"></div>
+                        </label>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <label for="diversifyOptimization" class="text-sm text-gray-300 flex items-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
+                            Diversify Optimization
+                        </label>
+                        <input type="number" id="diversifyOptimization" min="1" max="5" value="1" class="w-16 p-1.5 bg-gray-700 border border-gray-600 rounded-md text-sm text-center focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500">
+                    </div>
+                    <div>
+                        <label for="optimizedLanguage" class="text-sm text-gray-300 mb-1 block flex items-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-2"><path d="m5 8 6 6"/><path d="m4 14 6-6 2-3"/><path d="M2 5h12"/><path d="M7 2h1m4 0h1"/><path d="m22 22-5-10-5 10"/><path d="M14 18h6"/></svg>
+                            Optimized Prompt Language
+                        </label>
+                        <select id="optimizedLanguage" class="w-full p-2 bg-gray-700 border border-gray-600 rounded-md text-sm focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500">
+                            <option value="English">English</option>
+                            <option value="Spanish">Spanish</option>
+                            <option value="French">French</option>
+                            <option value="German">German</option>
+                            <option value="Japanese">Japanese</option>
+                            <option value="Chinese">Chinese</option>
+                        </select>
+                    </div>
+                    <button id="resetAddOns" class="w-full btn-secondary py-2 rounded-md text-sm">Reset to Default</button>
+                </div>
+            </div>
+        </div>
+
+        <button id="enhanceBtn" class="w-full btn-primary py-3 rounded-lg font-semibold flex items-center justify-center gap-2">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3.5 2 2.2 6.8a1 1 0 0 0 1.6.4L12 6l-2.7 3.3a1 1 0 0 0-.3 1.1l1.5 4.4"/><path d="M3.5 22l2.2-6.8a1 1 0 0 1 1.6-.4L12 18l-2.7-3.3a1 1 0 0 1-.3-1.1l1.5-4.4"/><path d="m18 15 2.5-2.5a2.83 2.83 0 0 0 0-4L18 6"/><path d="M21 12H9"/></svg>
+            <span>Enhance Prompt</span>
+            <div id="loadingSpinner" class="loader hidden"></div>
+        </button>
+
+        <div id="resultsArea" class="mt-6 space-y-6 hidden">
+            <h2 class="text-xl font-semibold text-gray-200">Enhanced Prompts</h2>
+            <div id="resultsTabs" class="flex border-b border-gray-700 mb-4">
+                </div>
+            <div id="resultsContent" class="space-y-4">
+                </div>
+        </div>
+
+        <div id="messageBox" class="fixed bottom-5 right-5 bg-gray-700 text-white p-4 rounded-lg shadow-lg hidden transition-opacity duration-300 max-w-sm z-50">
+            <p id="messageText"></p>
+            <button id="closeMessageBtn" class="absolute top-2 right-2 text-gray-400 hover:text-gray-200">&times;</button>
+        </div>
+
+    </div>
+
+    <script>
+        // --- DOM Elements ---
+        const originalPromptEl = document.getElementById('originalPrompt');
+        const aiEngineSelectorBtn = document.getElementById('aiEngineSelectorBtn');
+        const selectedEnginesTextEl = document.getElementById('selectedEnginesText');
+        const aiEngineCaret = document.getElementById('aiEngineCaret');
+        const aiEngineDropdown = document.getElementById('aiEngineDropdown');
+        const textModelsContainer = document.getElementById('textModelsContainer');
+        const imageModelsContainer = document.getElementById('imageModelsContainer');
+        const aiModelTabs = document.querySelectorAll('.ai-model-tab');
+
+        const addOnsBtn = document.getElementById('addOnsBtn');
+        const addOnsCaret = document.getElementById('addOnsCaret');
+        const addOnsDropdown = document.getElementById('addOnsDropdown');
+        const previewToggle = document.getElementById('previewToggle');
+        const diversifyOptimizationEl = document.getElementById('diversifyOptimization');
+        const optimizedLanguageEl = document.getElementById('optimizedLanguage');
+        const resetAddOnsBtn = document.getElementById('resetAddOns');
+
+        const enhanceBtn = document.getElementById('enhanceBtn');
+        const enhanceBtnText = enhanceBtn.querySelector('span');
+        const loadingSpinner = document.getElementById('loadingSpinner');
+
+        const resultsArea = document.getElementById('resultsArea');
+        const resultsTabsEl = document.getElementById('resultsTabs');
+        const resultsContentEl = document.getElementById('resultsContent');
+
+        const messageBox = document.getElementById('messageBox');
+        const messageText = document.getElementById('messageText');
+        const closeMessageBtn = document.getElementById('closeMessageBtn');
+
+        // --- State ---
+        let selectedAiEngines = new Set();
+        let currentResults = []; // To store { original, enhanced, engineId, engineName, variation }
+
+        const aiModels = {
+            text: [
+                { id: 'gemini-2.0-flash', name: 'Gemini 2.0 Flash', description: 'Fast and versatile model for text generation.', icon: 'sparkles' },
+                { id: 'gpt-4o', name: 'GPT-4o', description: 'OpenAI\'s new flagship model, reasons across audio, vision, and text.', icon: 'brain' },
+                { id: 'claude-3-sonnet', name: 'Claude 3 Sonnet', description: 'Balances intelligence and speed for enterprise workloads.', icon: 'feather' },
+                { id: 'llama-3-70b', name: 'Llama 3 70B', description: 'Large language model from Meta.', icon: 'message-circle' },
+            ],
+            image: [
+                { id: 'imagen-3.0-generate', name: 'Imagen 3.0', description: 'Google\'s text-to-image model for photorealistic images.', icon: 'image' },
+                { id: 'dall-e-3', name: 'DALL-E 3', description: 'OpenAI\'s image generation model with enhanced detail.', icon: 'palette' },
+                { id: 'stable-diffusion-xl', name: 'Stable Diffusion XL', description: 'Powerful open-source image generation model.', icon: 'camera' },
+            ]
+        };
+
+        // --- Helper Functions ---
+        function showMessage(text, duration = 3000) {
+            messageText.textContent = text;
+            messageBox.classList.remove('hidden');
+            messageBox.classList.add('opacity-100');
+            setTimeout(() => {
+                messageBox.classList.remove('opacity-100');
+                messageBox.classList.add('opacity-0');
+                setTimeout(() => messageBox.classList.add('hidden'), 300);
+            }, duration);
+        }
+
+        closeMessageBtn.addEventListener('click', () => {
+            messageBox.classList.remove('opacity-100');
+            messageBox.classList.add('opacity-0');
+            setTimeout(() => messageBox.classList.add('hidden'), 300);
+        });
+
+        function toggleDropdown(dropdown, caret, forceClose = false) {
+            const isHidden = dropdown.classList.contains('hidden');
+            if (forceClose && !isHidden) { // If forceClose is true and dropdown is open, close it
+                 dropdown.classList.remove('dropdown-enter-active');
+                dropdown.classList.add('dropdown-leave');
+                requestAnimationFrame(() => {
+                    dropdown.classList.add('dropdown-leave-active');
+                });
+                 if(caret) caret.style.transform = 'rotate(0deg)';
+                setTimeout(() => {
+                    dropdown.classList.add('hidden');
+                    dropdown.classList.remove('dropdown-leave', 'dropdown-leave-active');
+                }, 150);
+            } else if (!forceClose) { // Standard toggle logic
+                if (isHidden) {
+                    dropdown.classList.remove('hidden');
+                    requestAnimationFrame(() => {
+                        dropdown.classList.remove('dropdown-enter');
+                        dropdown.classList.add('dropdown-enter-active');
+                    });
+                    if(caret) caret.style.transform = 'rotate(180deg)';
+                } else {
+                    dropdown.classList.remove('dropdown-enter-active');
+                    dropdown.classList.add('dropdown-leave');
+                    requestAnimationFrame(() => {
+                        dropdown.classList.add('dropdown-leave-active');
+                    });
+                    if(caret) caret.style.transform = 'rotate(0deg)';
+                    setTimeout(() => {
+                        dropdown.classList.add('hidden');
+                        dropdown.classList.remove('dropdown-leave', 'dropdown-leave-active');
+                    }, 150);
+                }
+            }
+        }
+
+
+        function getLucideIcon(name, size = 16, color = 'currentColor', className = '') {
+            // This function returns inline SVGs for specified icons.
+            // It does not depend on the external lucide-react.js script.
+            const icons = {
+                sparkles: '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 L14.5 8 L21 9 L16.5 14 L18 21 L12 17.5 L6 21 L7.5 14 L3 9 L9.5 8 Z"/></svg>',
+                brain: '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a4.5 4.5 0 0 0-4.5 4.5v.5H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h1.5V17a4.5 4.5 0 1 0 9 0v1.5H18a2 2 0 0 0 2-2v-8a2 2 0 0 0-2-2h-1.5v-.5A4.5 4.5 0 0 0 12 2Z"/><path d="M12 2v5.5"/><path d="M12 17v5"/><path d="M12 12h.01"/></svg>',
+                feather: '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.24 12.24a6 6 0 0 0-8.49-8.49L5 10.5V19h8.5z"/><line x1="16" y1="8" x2="2" y2="22"/><line x1="17.5" y1="15" x2="9" y2="15"/></svg>',
+                'message-circle': '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>',
+                image: '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>',
+                palette: '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="13.5" cy="6.5" r=".5"/><circle cx="17.5" cy="10.5" r=".5"/><circle cx="8.5" cy="7.5" r=".5"/><circle cx="6.5" cy="12.5" r=".5"/><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.477-1.122-.297-.287-.703-.465-1.17-.465H12c-1.1 0-2-.9-2-2s.9-2 2-2h.172c1-.213 1.83-.983 2.17-1.94.34-.956.03-2.06-.83-2.72-.86-.66-1.97-.82-3.03-.54-.49.12-.98.29-1.45.51l-1.48.66c-.6.27-1.27.41-1.95.41H4c-1.1 0-2-.9-2-2s.9-2 2-2h2.12C7.88 2.11 9.77 2 12 2z"/></svg>',
+                camera: '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg>',
+            };
+            return `<span class="${className} inline-block mr-2 align-middle">${icons[name] || ''}</span>`;
+        }
+
+
+        function populateAiModels() {
+            function createModelItem(model, type) {
+                const div = document.createElement('div');
+                div.className = 'flex items-center justify-between p-2.5 hover:bg-gray-700 rounded-md transition-colors duration-150 cursor-pointer';
+                div.innerHTML = `
+                    <div class="flex items-center">
+                        ${getLucideIcon(model.icon)}
+                        <div>
+                            <span class="text-sm font-medium text-gray-200">${model.name}</span>
+                            <p class="text-xs text-gray-400">${model.description}</p>
+                        </div>
+                    </div>
+                    <input type="checkbox" data-id="${model.id}" data-name="${model.name}" data-type="${type}"
+                           class="form-checkbox h-5 w-5 text-indigo-600 bg-gray-600 border-gray-500 rounded focus:ring-indigo-500 checkbox-custom">
+                `;
+                div.addEventListener('click', (e) => {
+                    if (e.target.type !== 'checkbox') {
+                        const checkbox = div.querySelector('input[type="checkbox"]');
+                        checkbox.checked = !checkbox.checked;
+                        checkbox.dispatchEvent(new Event('change'));
+                    }
+                });
+
+                div.querySelector('input[type="checkbox"]').addEventListener('change', (e) => {
+                    if (e.target.checked) {
+                        selectedAiEngines.add(e.target.dataset.id);
+                    } else {
+                        selectedAiEngines.delete(e.target.dataset.id);
+                    }
+                    updateSelectedEnginesText();
+                });
+                return div;
+            }
+
+            textModelsContainer.innerHTML = '';
+            aiModels.text.forEach(model => textModelsContainer.appendChild(createModelItem(model, 'text')));
+
+            imageModelsContainer.innerHTML = '';
+            aiModels.image.forEach(model => imageModelsContainer.appendChild(createModelItem(model, 'image')));
+        }
+
+        function updateSelectedEnginesText() {
+            if (selectedAiEngines.size === 0) {
+                selectedEnginesTextEl.textContent = 'Select AI Engines';
+            } else if (selectedAiEngines.size === 1) {
+                const firstId = selectedAiEngines.values().next().value;
+                const model = [...aiModels.text, ...aiModels.image].find(m => m.id === firstId);
+                selectedEnginesTextEl.textContent = model ? model.name : '1 Engine Selected';
+            } else {
+                selectedEnginesTextEl.textContent = `${selectedAiEngines.size} Engines Selected`;
+            }
+        }
+
+        function calculateWordCount(text) {
+            return text.trim().split(/\s+/).filter(Boolean).length;
+        }
+
+        function renderResults() {
+            resultsArea.classList.remove('hidden');
+            resultsTabsEl.innerHTML = '';
+            resultsContentEl.innerHTML = '';
+
+            if (currentResults.length === 0) {
+                resultsContentEl.innerHTML = '<p class="text-gray-400">No results yet. Enhance a prompt to see them here.</p>';
+                return;
+            }
+
+            const originalPromptTab = document.createElement('button');
+            originalPromptTab.className = 'result-tab py-2 px-4 text-sm font-medium text-gray-400 hover:text-gray-200 focus:outline-none';
+            originalPromptTab.textContent = 'Original Prompt';
+            originalPromptTab.dataset.tabId = 'original';
+            resultsTabsEl.appendChild(originalPromptTab);
+
+            currentResults.forEach((result, index) => {
+                const tab = document.createElement('button');
+                tab.className = 'result-tab py-2 px-4 text-sm font-medium text-gray-400 hover:text-gray-200 focus:outline-none';
+                let tabText = `Enhanced #${index + 1} (${result.engineName})`;
+                if (result.variation && result.totalVariationsForEngine > 1) { 
+                    tabText += ` (Var ${result.variation}/${result.totalVariationsForEngine})`;
+                }
+                tab.textContent = tabText;
+                tab.dataset.tabId = index;
+                resultsTabsEl.appendChild(tab);
+            });
+
+            document.querySelectorAll('.result-tab').forEach(tab => {
+                tab.addEventListener('click', (e) => {
+                    document.querySelectorAll('.result-tab').forEach(t => t.classList.remove('tab-active', 'border-b-2', 'border-indigo-500', 'text-indigo-400'));
+                    e.target.classList.add('tab-active', 'border-b-2', 'border-indigo-500', 'text-indigo-400');
+                    displayResultContent(e.target.dataset.tabId);
+                });
+            });
+
+            if (currentResults.length > 0) {
+                resultsTabsEl.querySelector(`[data-tab-id="0"]`).click();
+            } else {
+                 originalPromptTab.click();
+            }
+        }
+
+        function displayResultContent(tabId) {
+            resultsContentEl.innerHTML = '';
+            let promptText, wordCount, title;
+
+            const container = document.createElement('div');
+            container.className = 'bg-gray-700 p-4 rounded-lg shadow';
+
+            const titleEl = document.createElement('h3');
+            titleEl.className = 'text-lg font-semibold text-gray-100 mb-2';
+
+            if (tabId === 'original') {
+                title = 'Original Prompt';
+                promptText = originalPromptEl.value;
+                wordCount = calculateWordCount(promptText);
+                titleEl.textContent = title;
+                container.appendChild(titleEl);
+
+                const statsEl = document.createElement('p');
+                statsEl.className = 'text-xs text-gray-400 mb-3';
+                statsEl.textContent = `${wordCount} words`;
+                container.appendChild(statsEl);
+
+            } else { 
+                const result = currentResults[parseInt(tabId)];
+                if (!result) return;
+
+                title = `Enhanced Prompt: ${result.engineName}`; 
+                 if (result.variation && result.totalVariationsForEngine > 1) { 
+                    title += ` (Variation ${result.variation} of ${result.totalVariationsForEngine})`;
+                }
+                promptText = result.enhanced;
+                titleEl.textContent = title;
+                container.appendChild(titleEl);
+            }
+
+            const promptTextEl = document.createElement('p');
+            promptTextEl.className = 'text-gray-300 whitespace-pre-wrap leading-relaxed';
+            promptTextEl.textContent = promptText;
+            container.appendChild(promptTextEl);
+
+            const actionsEl = document.createElement('div');
+            actionsEl.className = 'mt-4 flex items-center gap-2';
+
+            const copyBtn = document.createElement('button');
+            copyBtn.className = 'btn-secondary px-3 py-1.5 rounded-md text-xs flex items-center gap-1.5';
+            copyBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg> Copy`;
+            copyBtn.addEventListener('click', () => {
+                if (navigator.clipboard && navigator.clipboard.writeText) {
+                    navigator.clipboard.writeText(promptText).then(() => {
+                        showMessage('Copied to clipboard!');
+                    }).catch(err => {
+                        showMessage('Failed to copy.');
+                        console.error('Async: Could not copy text: ', err);
+                        fallbackCopyTextToClipboard(promptText);
+                    });
+                } else {
+                    fallbackCopyTextToClipboard(promptText);
+                }
+            });
+            actionsEl.appendChild(copyBtn);
+            container.appendChild(actionsEl);
+
+            resultsContentEl.appendChild(container);
+        }
+
+        function fallbackCopyTextToClipboard(text) {
+            const textArea = document.createElement("textarea");
+            textArea.value = text;
+            textArea.style.top = "0";
+            textArea.style.left = "0";
+            textArea.style.position = "fixed";
+            document.body.appendChild(textArea);
+            textArea.focus();
+            textArea.select();
+            try {
+                const successful = document.execCommand('copy');
+                if (successful) {
+                    showMessage('Copied to clipboard (fallback)!');
+                } else {
+                    showMessage('Fallback copy failed.');
+                }
+            } catch (err) {
+                showMessage('Fallback copy error.');
+                console.error('Fallback: Oops, unable to copy', err);
+            }
+            document.body.removeChild(textArea);
+        }
+
+
+        // --- Event Listeners ---
+        aiEngineSelectorBtn.addEventListener('click', (e) => {
+            e.stopPropagation(); // Prevent click from bubbling to document, which would close it immediately
+            toggleDropdown(addOnsDropdown, addOnsCaret, true); // Force close other dropdown
+            toggleDropdown(aiEngineDropdown, aiEngineCaret); // Toggle current dropdown
+        });
+        addOnsBtn.addEventListener('click', (e) => {
+            e.stopPropagation(); // Prevent click from bubbling to document
+            toggleDropdown(aiEngineDropdown, aiEngineCaret, true); // Force close other dropdown
+            toggleDropdown(addOnsDropdown, addOnsCaret); // Toggle current dropdown
+        });
+
+        // Close dropdowns if clicked outside
+        document.addEventListener('click', (event) => {
+            // Check if AI Engine dropdown is open and click is outside
+            if (!aiEngineDropdown.classList.contains('hidden') && 
+                !aiEngineSelectorBtn.contains(event.target) && 
+                !aiEngineDropdown.contains(event.target)) {
+                toggleDropdown(aiEngineDropdown, aiEngineCaret, true); // Force close
+            }
+            // Check if Add-ons dropdown is open and click is outside
+            if (!addOnsDropdown.classList.contains('hidden') && 
+                !addOnsBtn.contains(event.target) && 
+                !addOnsDropdown.contains(event.target)) {
+                toggleDropdown(addOnsDropdown, addOnsCaret, true); // Force close
+            }
+        });
+
+
+        aiModelTabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                aiModelTabs.forEach(t => t.classList.remove('tab-active'));
+                tab.classList.add('tab-active');
+                if (tab.dataset.tab === 'textModels') {
+                    textModelsContainer.classList.remove('hidden');
+                    imageModelsContainer.classList.add('hidden');
+                } else {
+                    textModelsContainer.classList.add('hidden');
+                    imageModelsContainer.classList.remove('hidden');
+                }
+            });
+        });
+
+        resetAddOnsBtn.addEventListener('click', () => {
+            previewToggle.checked = false;
+            diversifyOptimizationEl.value = 1;
+            optimizedLanguageEl.value = 'English';
+            showMessage('Add-ons reset to default.');
+        });
+
+        enhanceBtn.addEventListener('click', async () => {
+            const originalPrompt = originalPromptEl.value.trim();
+            if (!originalPrompt) {
+                showMessage('Please enter an original prompt.');
+                originalPromptEl.focus();
+                return;
+            }
+            if (selectedAiEngines.size === 0) {
+                showMessage('Please select at least one AI engine.');
+                if (aiEngineDropdown.classList.contains('hidden')) {
+                    toggleDropdown(aiEngineDropdown, aiEngineCaret); // Open it if closed
+                }
+                aiEngineSelectorBtn.classList.add('ring-2', 'ring-red-500');
+                setTimeout(() => aiEngineSelectorBtn.classList.remove('ring-2', 'ring-red-500'), 2000);
+                return;
+            }
+
+            loadingSpinner.classList.remove('hidden');
+            enhanceBtnText.textContent = 'Enhancing...';
+            enhanceBtn.disabled = true;
+            currentResults = []; 
+
+            const numVariationsTotal = parseInt(diversifyOptimizationEl.value) || 1;
+            const language = optimizedLanguageEl.value;
+            
+            const apiKey = "AIzaSyBUeakcTtKZLMqhDcjDU2q-LDKZnGln--w"; // This will be an empty string. Canvas provides it at runtime.
+            // DO NOT add API key validation here.
+
+            for (const engineId of selectedAiEngines) {
+                const engineDetails = [...aiModels.text, ...aiModels.image].find(m => m.id === engineId);
+                if (!engineDetails) continue;
+
+                const isImageModel = aiModels.image.some(m => m.id === engineId);
+                let currentApiUrl;
+                let payload;
+                let method = 'POST'; // Default method
+
+                // Construct the API prompt for Gemini (used for enhancing prompts for text models, or for image models if not imagen-3.0-generate)
+                let apiUserPromptForEnhancement = `You are a Prompt Refinement Specialist. Your primary task is to take a user's original prompt and meticulously transform it into an optimized version. Your goal is to rephrase, refine, and enhance the original prompt while strictly preserving its core intent and subject matter.
+Original user prompt: "${originalPrompt}"
+Targeting AI model: ${engineDetails.name} (${isImageModel ? 'Image' : 'Text'} Generation)
+Desired language for the optimized prompt: ${language}.
+Refinement Guidelines:
+- ${isImageModel ? "For image generation, focus on incorporating rich visual descriptors, specifying artistic style (e.g., photorealistic, cartoonish, watercolor), composition, lighting, color palette, and mood. Ensure the core subject is clear and the prompt is structured as a coherent descriptive narrative, not just a list of keywords." : "For text generation, focus on improving clarity, specifying desired tone or style if applicable, and adding pertinent detail without losing the original intent. Avoid merely fragmenting the prompt; instead, build upon its core idea to make it robust."}
+The final output should ONLY be the optimized prompt itself, without any additional commentary, intro, or concluding remarks.`;
+                
+                if (numVariationsTotal > 1) {
+                    apiUserPromptForEnhancement += `\n\nThis is variation ${j + 1} of ${numVariationsTotal} requested for ${engineDetails.name}. For this specific variation, attempt a distinct approach to the refinement based on the following emphasis (if applicable):\n`;
+                    // Variation specific instructions can be added here if needed for each j
+                }
+
+
+                if (isImageModel && engineId === 'imagen-3.0-generate') {
+                    // For Imagen, we use the original prompt directly to generate an image.
+                    // The "enhancement" in this context is providing the prompt that would be used.
+                    // No separate Gemini call to enhance the prompt *for* Imagen in this simplified loop.
+                    // If prompt enhancement *before* sending to Imagen is desired, that would be a separate Gemini call.
+                    currentApiUrl = `https://generativelanguage.googleapis.com/v1beta/models/imagen-3.0-generate-002:predict?key=${apiKey}`;
+                    payload = { instances: [{ prompt: originalPrompt }], parameters: { "sampleCount": 1 } };
+                } else {
+                    // For text models, or if we wanted to enhance a prompt *for* a generic image model using Gemini
+                    currentApiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+                    payload = { contents: [{ role: "user", parts: [{ text: apiUserPromptForEnhancement }] }] };
+                }
+
+
+                for (let j = 0; j < numVariationsTotal; j++) {
+                    // If numVariationsTotal > 1 and not Imagen, slightly adjust apiUserPromptForEnhancement for each j
+                    if (numVariationsTotal > 1 && !(isImageModel && engineId === 'imagen-3.0-generate')) {
+                        let tempApiUserPrompt = apiUserPromptForEnhancement; // Start with base
+                        if (j === 0) tempApiUserPrompt += "\n- Variation Emphasis: Maximum clarity and directness.\n";
+                        else if (j === 1) tempApiUserPrompt += "\n- Variation Emphasis: A more creative or evocative style.\n";
+                        else tempApiUserPrompt += `\n- Variation Emphasis: Explore an alternative angle for enhancement (Variation ${j+1}).\n`;
+                        tempApiUserPrompt += "Remember, the output should still be ONLY the optimized prompt.";
+                        payload = { contents: [{ role: "user", parts: [{ text: tempApiUserPrompt }] }] };
+                    } else if (isImageModel && engineId === 'imagen-3.0-generate' && numVariationsTotal > 1) {
+                        // For Imagen, if multiple "variations" are requested, it means generating multiple images from the same prompt.
+                        // The prompt itself doesn't change per variation in this direct-to-Imagen path.
+                        // The payload for Imagen's sampleCount handles multiple image generations from one prompt.
+                        // Here, we'll just log the same original prompt multiple times as "enhanced" for consistency in `currentResults`.
+                    }
+
+
+                    try {
+                        const response = await fetch(currentApiUrl, {
+                            method: method, // 'POST'
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(payload)
+                        });
+                        const result = await response.json();
+                        
+                        let enhancedText;
+                        if (isImageModel && engineId === 'imagen-3.0-generate') {
+                            // For Imagen, the "enhanced prompt" is the original prompt.
+                            // We are not displaying the image, just confirming the prompt used.
+                            if (result.predictions && result.predictions.length > 0 && result.predictions[0].bytesBase64Encoded) {
+                                enhancedText = originalPrompt + ` (Note: This prompt was used for ${engineDetails.name} image generation. Actual image not displayed.)`;
+                            } else {
+                                enhancedText = `Error: ${engineDetails.name} did not return expected image data. ${result.error ? result.error.message : JSON.stringify(result)}`;
+                                console.error(`${engineDetails.name} API Error:`, result);
+                            }
+                        } else { // Text model (Gemini Flash for enhancement)
+                            if (result.candidates && result.candidates.length > 0 &&
+                                result.candidates[0].content && result.candidates[0].content.parts &&
+                                result.candidates[0].content.parts.length > 0) {
+                                enhancedText = result.candidates[0].content.parts[0].text.trim();
+                                // Remove any leading/trailing "Enhanced Prompt:" or similar, as the Gemini prompt asks for ONLY the prompt.
+                                enhancedText = enhancedText.replace(/^Enhanced Prompt:\s*/i, '').trim();
+                            } else if (result.error) {
+                                enhancedText = `API Error for ${engineDetails.name}: ${result.error.message}`;
+                                console.error(`Gemini API Error for ${engineDetails.name} (Var ${j+1}):`, result.error);
+                            } else {
+                                enhancedText = `Error: Invalid response structure from enhancement API for ${engineDetails.name}.`;
+                                console.error(`Invalid Gemini response for ${engineDetails.name} (Var ${j+1}):`, result);
+                            }
+                        }
+
+                        currentResults.push({
+                            original: originalPrompt,
+                            enhanced: enhancedText,
+                            engineId: engineId,
+                            engineName: engineDetails.name,
+                            variation: j + 1,
+                            totalVariationsForEngine: numVariationsTotal,
+                            isError: enhancedText.startsWith("Error:") || enhancedText.startsWith("API Error:")
+                        });
+
+                    } catch (error) {
+                        console.error(`Network/Fetch Error for ${engineDetails.name} (Var ${j+1}):`, error);
+                        showMessage(`Network error for ${engineDetails.name}.`);
+                        currentResults.push({
+                            original: originalPrompt,
+                            enhanced: `Error: Network or client-side issue for ${engineDetails.name}. ${error.message}`,
+                            engineId: engineId,
+                            engineName: engineDetails.name,
+                            variation: j + 1,
+                            totalVariationsForEngine: numVariationsTotal,
+                            isError: true
+                        });
+                    }
+                }
+            }
+
+            loadingSpinner.classList.add('hidden');
+            enhanceBtnText.textContent = 'Enhance Prompt';
+            enhanceBtn.disabled = false;
+            renderResults();
+            if (currentResults.some(r => !r.isError)) {
+                 showMessage('Prompts processed/enhanced!');
+            } else {
+                 showMessage('Failed to process/enhance all prompts. Check console.');
+            }
+        });
+
+
+        // --- Initialization ---
+        populateAiModels();
+        updateSelectedEnginesText(); 
+        originalPromptEl.placeholder = "e.g., create a story about a lost robot, or, a photorealistic image of a cat wearing a tiny hat...";
+        showMessage('Welcome to Prompt Auto-Tune!', 2500);
+
+    </script>
+</body>
+</html>
