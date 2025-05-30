@@ -671,17 +671,18 @@
 </body>
 </html>
 ```
+<!-- 
+Key changes in the `enhanceBtn` function:
 
-**Key changes in the `enhanceBtn` function:**
+1. `netlifyFunctionUrl`: A variable `netlifyFunctionUrl` is defined (e.g., `/.netlify/functions/enhance-prompt`). Make sure this path matches your Netlify function setup and any redirects.
+2. No Direct API Key Usage: All references to `apiKey` and direct Gemini API URLs have been removed from this client-side code.
+3. `fetch` Call Modified:
+    - The `fetch` now calls `netlifyFunctionUrl`.
+    - It uses the `POST` method.
+    - The `body` is a JSON string containing `originalPrompt` and other relevant details like `engineId`, `engineName`, `engineType`, `language`, and variation info. Your serverless function will use this information to make the appropriate call to the Gemini API.
+4. Response Handling:
+    - The code now expects a JSON response from your Netlify function. It assumes your function returns an object like `{ enhancedPrompt: "...", engineName: "...", isError: false, errorMessage: "..." }`. Ensure your serverless function returns data in a structure that this client-side code can parse correctly to populate `currentResults`.
+5. Error Handling: Basic error handling for the `fetch` call to your Netlify function is included.
 
-1.  **`netlifyFunctionUrl`:** A variable `netlifyFunctionUrl` is defined (e.g., `/.netlify/functions/enhance-prompt`). You'll need to make sure this path matches how you set up your function and any Netlify redirects.
-2.  **No Direct API Key Usage:** All references to `apiKey` and direct Gemini API URLs have been removed from this client-side code.
-3.  **`fetch` Call Modified:**
-    * The `fetch` now calls `netlifyFunctionUrl`.
-    * It uses the `POST` method.
-    * The `body` is a JSON string containing `originalPrompt` and other relevant details like `engineId`, `engineName`, `engineType`, `language`, and variation info. Your serverless function will use this information to make the appropriate call to the Gemini API.
-4.  **Response Handling:**
-    * The code now expects a JSON response from your Netlify function. I've assumed your function might return an object like `{ enhancedPrompt: "...", engineName: "...", isError: false, errorMessage: "..." }`. You'll need to ensure your serverless function returns data in a structure that this client-side code can parse correctly to populate `currentResults`.
-5.  **Error Handling:** Basic error handling for the `fetch` call to your Netlify function is included.
-
-Remember, this update only covers the **client-side** part. You still need to create the actual `enhance-prompt.js` serverless function in your Netlify project, add your `GEMINI_API_KEY` as an environment variable in Netlify's UI, and ensure that function correctly processes the incoming request and calls the Gemini A
+Note: This update only covers the client-side part. You still need to create the actual `enhance-prompt.js` serverless function in your Netlify project, add your `GEMINI_API_KEY` as an environment variable in Netlify's UI, and ensure that function correctly processes the incoming request and calls the Gemini API.
+-->
