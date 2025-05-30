@@ -277,8 +277,6 @@
                 { id: 'llama-3-70b', name: 'Llama 3 70B', description: 'Large language model from Meta.', icon: 'message-circle' },
             ],
             image: [
-                // Note: For image models, if calling their native APIs, the proxy function would need to handle that.
-                // If using Gemini to *generate a prompt for* an image model, treat as text model call to Gemini.
                 { id: 'imagen-3.0', name: 'Imagen 3.0 (Concept)', description: 'For generating prompts for Google Imagen.', icon: 'image' },
                 { id: 'dall-e-3-concept', name: 'DALL-E 3 (Concept)', description: 'For generating prompts for DALL-E 3.', icon: 'palette' },
                 { id: 'stable-diffusion-xl-concept', name: 'Stable Diffusion XL (Concept)', description: 'For generating prompts for SDXL.', icon: 'camera' },
@@ -590,8 +588,7 @@
             const numVariationsTotal = parseInt(diversifyOptimizationEl.value) || 1;
             const language = optimizedLanguageEl.value;
             
-            // Define the Netlify function endpoint
-            const netlifyFunctionUrl = '/.netlify/functions/enhance-prompt'; // Adjust if you use a redirect (e.g., /api/enhance-prompt)
+            const netlifyFunctionUrl = '/.netlify/functions/enhance-prompt'; 
 
             for (const engineId of selectedAiEngines) {
                 const engineDetails = [...aiModels.text, ...aiModels.image].find(m => m.id === engineId);
@@ -600,13 +597,12 @@
                 for (let j = 0; j < numVariationsTotal; j++) {
                     const requestPayload = {
                         originalPrompt: originalPrompt,
-                        engineId: engineId, // Send engineId so proxy knows the target
+                        engineId: engineId, 
                         engineName: engineDetails.name,
                         engineType: aiModels.text.some(m => m.id === engineId) ? 'text' : 'image',
                         language: language,
-                        variationCount: j + 1, // Current variation number
-                        totalVariations: numVariationsTotal // Total variations requested for this engine
-                        // Add any other options from addOnsDropdown your proxy might need
+                        variationCount: j + 1, 
+                        totalVariations: numVariationsTotal 
                     };
 
                     try {
@@ -617,17 +613,31 @@
                         });
 
                         if (!response.ok) {
-                            const errorData = await response.json().catch(() => ({ error: "Failed to parse error response from proxy." }));
-                            throw new Error(errorData.error || `Proxy request failed with status ${response.status}`);
+                            let errorDetails = `Proxy request failed with status ${response.status}`;
+                            try {
+                                // Try to parse the error response as JSON
+                                const errorData = await response.json();
+                                errorDetails = errorData.error || errorData.message || JSON.stringify(errorData);
+                            } catch (e) {
+                                // If JSON parsing fails, try to get the response as text
+                                try {
+                                    const textError = await response.text();
+                                    // Avoid showing full HTML pages as error messages if they are too long
+                                    errorDetails = textError.length > 200 ? textError.substring(0, 200) + "..." : (textError || `Proxy returned status ${response.status} with non-JSON response.`);
+                                } catch (textE) {
+                                    errorDetails = `Proxy returned status ${response.status} with unreadable response.`;
+                                }
+                            }
+                            throw new Error(errorDetails);
                         }
                         
-                        const resultData = await response.json(); // Expecting { enhancedPrompt: "...", engineName: "...", isError: false/true, errorMessage: "..." }
+                        const resultData = await response.json(); 
                         
                         currentResults.push({
                             original: originalPrompt,
-                            enhanced: resultData.enhancedPrompt || "Error: No enhanced prompt received.",
+                            enhanced: resultData.enhancedPrompt || "Error: No enhanced prompt received from proxy.",
                             engineId: engineId,
-                            engineName: resultData.engineName || engineDetails.name, // Use engineName from proxy if provided
+                            engineName: resultData.engineName || engineDetails.name, 
                             variation: j + 1,
                             totalVariationsForEngine: numVariationsTotal,
                             isError: resultData.isError || (resultData.enhancedPrompt ? false : true)
@@ -635,7 +645,8 @@
 
                     } catch (error) {
                         console.error(`Error calling Netlify function for ${engineDetails.name} (Var ${j+1}):`, error);
-                        showMessage(`Error: ${error.message}`);
+                        // Ensure the message shown to the user is the error message from the throw new Error() or the catch block
+                        showMessage(`Error: ${error.message}`); 
                         currentResults.push({
                             original: originalPrompt,
                             enhanced: `Error communicating with enhancement service: ${error.message}`,
@@ -656,7 +667,7 @@
             if (currentResults.some(r => !r.isError && r.enhanced && !r.enhanced.startsWith("Error:"))) {
                  showMessage('Prompts processed/enhanced!');
             } else {
-                 showMessage('Failed to process/enhance all prompts. Check console.');
+                 showMessage('Failed to process/enhance all prompts. Check console for details.');
             }
         });
 
@@ -671,18 +682,16 @@
 </body>
 </html>
 
-<!-- 
-Key changes in the `enhanceBtn` function:
+<!--
+**Key changes in the `enhanceBtn` function's `try...catch` block for the `fetch` call:**
 
-1. `netlifyFunctionUrl`: A variable `netlifyFunctionUrl` is defined (e.g., `/.netlify/functions/enhance-prompt`). Make sure this path matches your Netlify function setup and any redirects.
-2. No Direct API Key Usage: All references to `apiKey` and direct Gemini API URLs have been removed from this client-side code.
-3. `fetch` Call Modified:
-    - The `fetch` now calls `netlifyFunctionUrl`.
-    - It uses the `POST` method.
-    - The `body` is a JSON string containing `originalPrompt` and other relevant details like `engineId`, `engineName`, `engineType`, `language`, and variation info. Your serverless function will use this information to make the appropriate call to the Gemini API.
-4. Response Handling:
-    - The code now expects a JSON response from your Netlify function. It assumes your function returns an object like `{ enhancedPrompt: "...", engineName: "...", isError: false, errorMessage: "..." }`. Ensure your serverless function returns data in a structure that this client-side code can parse correctly to populate `currentResults`.
-5. Error Handling: Basic error handling for the `fetch` call to your Netlify function is included.
+1.  **Improved Error Parsing when `!response.ok`:**
+    * It first attempts to parse the error response from the proxy as JSON (`await response.json()`).
+    * If that fails (which is likely if the proxy returned an HTML error page or plain text), it then `catch`es this JSON parsing error and attempts to read the response as plain text (`await response.text()`).
+    * This plain text error is then used to construct a more informative error message.
+    * A length check is added to the text error to prevent displaying overly long HTML error pages directly in the `showMessage` alert.
+    * If reading as text also fails, a generic "unreadable response" message is used.
+2.  **Consistent Error Message Display:** The `showMessage(\`Error: ${error.message}\`)` in the final `catch` block will now display the more detailed error message that was constructed.
 
-Note: This update only covers the client-side part. You still need to create the actual `enhance-prompt.js` serverless function in your Netlify project, add your `GEMINI_API_KEY` as an environment variable in Netlify's UI, and ensure that function correctly processes the incoming request and calls the Gemini API.
+This refined error handling should help you better diagnose what your Netlify function is returning when things go wrong on its end. You'll be able to see if it's a structured JSON error from your function's logic, a plain text error, or even part of an HTML error page from Netlify itse
 -->
