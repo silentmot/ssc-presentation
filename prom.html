@@ -267,7 +267,7 @@
 
         // --- State ---
         let selectedAiEngines = new Set();
-        let currentResults = []; // To store { original, enhanced, engineId, engineName, variation }
+        let currentResults = [];
 
         const aiModels = {
             text: [
@@ -277,9 +277,11 @@
                 { id: 'llama-3-70b', name: 'Llama 3 70B', description: 'Large language model from Meta.', icon: 'message-circle' },
             ],
             image: [
-                { id: 'imagen-3.0-generate', name: 'Imagen 3.0', description: 'Google\'s text-to-image model for photorealistic images.', icon: 'image' },
-                { id: 'dall-e-3', name: 'DALL-E 3', description: 'OpenAI\'s image generation model with enhanced detail.', icon: 'palette' },
-                { id: 'stable-diffusion-xl', name: 'Stable Diffusion XL', description: 'Powerful open-source image generation model.', icon: 'camera' },
+                // Note: For image models, if calling their native APIs, the proxy function would need to handle that.
+                // If using Gemini to *generate a prompt for* an image model, treat as text model call to Gemini.
+                { id: 'imagen-3.0', name: 'Imagen 3.0 (Concept)', description: 'For generating prompts for Google Imagen.', icon: 'image' },
+                { id: 'dall-e-3-concept', name: 'DALL-E 3 (Concept)', description: 'For generating prompts for DALL-E 3.', icon: 'palette' },
+                { id: 'stable-diffusion-xl-concept', name: 'Stable Diffusion XL (Concept)', description: 'For generating prompts for SDXL.', icon: 'camera' },
             ]
         };
 
@@ -303,7 +305,7 @@
 
         function toggleDropdown(dropdown, caret, forceClose = false) {
             const isHidden = dropdown.classList.contains('hidden');
-            if (forceClose && !isHidden) { // If forceClose is true and dropdown is open, close it
+            if (forceClose && !isHidden) {
                  dropdown.classList.remove('dropdown-enter-active');
                 dropdown.classList.add('dropdown-leave');
                 requestAnimationFrame(() => {
@@ -314,7 +316,7 @@
                     dropdown.classList.add('hidden');
                     dropdown.classList.remove('dropdown-leave', 'dropdown-leave-active');
                 }, 150);
-            } else if (!forceClose) { // Standard toggle logic
+            } else if (!forceClose) {
                 if (isHidden) {
                     dropdown.classList.remove('hidden');
                     requestAnimationFrame(() => {
@@ -339,8 +341,6 @@
 
 
         function getLucideIcon(name, size = 16, color = 'currentColor', className = '') {
-            // This function returns inline SVGs for specified icons.
-            // It does not depend on the external lucide-react.js script.
             const icons = {
                 sparkles: '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 L14.5 8 L21 9 L16.5 14 L18 21 L12 17.5 L6 21 L7.5 14 L3 9 L9.5 8 Z"/></svg>',
                 brain: '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a4.5 4.5 0 0 0-4.5 4.5v.5H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h1.5V17a4.5 4.5 0 1 0 9 0v1.5H18a2 2 0 0 0 2-2v-8a2 2 0 0 0-2-2h-1.5v-.5A4.5 4.5 0 0 0 12 2Z"/><path d="M12 2v5.5"/><path d="M12 17v5"/><path d="M12 12h.01"/></svg>',
@@ -376,7 +376,6 @@
                         checkbox.dispatchEvent(new Event('change'));
                     }
                 });
-
                 div.querySelector('input[type="checkbox"]').addEventListener('change', (e) => {
                     if (e.target.checked) {
                         selectedAiEngines.add(e.target.dataset.id);
@@ -387,10 +386,8 @@
                 });
                 return div;
             }
-
             textModelsContainer.innerHTML = '';
             aiModels.text.forEach(model => textModelsContainer.appendChild(createModelItem(model, 'text')));
-
             imageModelsContainer.innerHTML = '';
             aiModels.image.forEach(model => imageModelsContainer.appendChild(createModelItem(model, 'image')));
         }
@@ -415,30 +412,26 @@
             resultsArea.classList.remove('hidden');
             resultsTabsEl.innerHTML = '';
             resultsContentEl.innerHTML = '';
-
             if (currentResults.length === 0) {
                 resultsContentEl.innerHTML = '<p class="text-gray-400">No results yet. Enhance a prompt to see them here.</p>';
                 return;
             }
-
             const originalPromptTab = document.createElement('button');
             originalPromptTab.className = 'result-tab py-2 px-4 text-sm font-medium text-gray-400 hover:text-gray-200 focus:outline-none';
             originalPromptTab.textContent = 'Original Prompt';
             originalPromptTab.dataset.tabId = 'original';
             resultsTabsEl.appendChild(originalPromptTab);
-
             currentResults.forEach((result, index) => {
                 const tab = document.createElement('button');
                 tab.className = 'result-tab py-2 px-4 text-sm font-medium text-gray-400 hover:text-gray-200 focus:outline-none';
                 let tabText = `Enhanced #${index + 1} (${result.engineName})`;
-                if (result.variation && result.totalVariationsForEngine > 1) { 
+                if (result.variation && result.totalVariationsForEngine > 1) {
                     tabText += ` (Var ${result.variation}/${result.totalVariationsForEngine})`;
                 }
                 tab.textContent = tabText;
                 tab.dataset.tabId = index;
                 resultsTabsEl.appendChild(tab);
             });
-
             document.querySelectorAll('.result-tab').forEach(tab => {
                 tab.addEventListener('click', (e) => {
                     document.querySelectorAll('.result-tab').forEach(t => t.classList.remove('tab-active', 'border-b-2', 'border-indigo-500', 'text-indigo-400'));
@@ -446,7 +439,6 @@
                     displayResultContent(e.target.dataset.tabId);
                 });
             });
-
             if (currentResults.length > 0) {
                 resultsTabsEl.querySelector(`[data-tab-id="0"]`).click();
             } else {
@@ -457,10 +449,8 @@
         function displayResultContent(tabId) {
             resultsContentEl.innerHTML = '';
             let promptText, wordCount, title;
-
             const container = document.createElement('div');
             container.className = 'bg-gray-700 p-4 rounded-lg shadow';
-
             const titleEl = document.createElement('h3');
             titleEl.className = 'text-lg font-semibold text-gray-100 mb-2';
 
@@ -470,18 +460,15 @@
                 wordCount = calculateWordCount(promptText);
                 titleEl.textContent = title;
                 container.appendChild(titleEl);
-
                 const statsEl = document.createElement('p');
                 statsEl.className = 'text-xs text-gray-400 mb-3';
                 statsEl.textContent = `${wordCount} words`;
                 container.appendChild(statsEl);
-
             } else { 
                 const result = currentResults[parseInt(tabId)];
                 if (!result) return;
-
-                title = `Enhanced Prompt: ${result.engineName}`; 
-                 if (result.variation && result.totalVariationsForEngine > 1) { 
+                title = `Enhanced Prompt: ${result.engineName}`;
+                 if (result.variation && result.totalVariationsForEngine > 1) {
                     title += ` (Variation ${result.variation} of ${result.totalVariationsForEngine})`;
                 }
                 promptText = result.enhanced;
@@ -493,10 +480,8 @@
             promptTextEl.className = 'text-gray-300 whitespace-pre-wrap leading-relaxed';
             promptTextEl.textContent = promptText;
             container.appendChild(promptTextEl);
-
             const actionsEl = document.createElement('div');
             actionsEl.className = 'mt-4 flex items-center gap-2';
-
             const copyBtn = document.createElement('button');
             copyBtn.className = 'btn-secondary px-3 py-1.5 rounded-md text-xs flex items-center gap-1.5';
             copyBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg> Copy`;
@@ -515,7 +500,6 @@
             });
             actionsEl.appendChild(copyBtn);
             container.appendChild(actionsEl);
-
             resultsContentEl.appendChild(container);
         }
 
@@ -542,36 +526,25 @@
             document.body.removeChild(textArea);
         }
 
-
         // --- Event Listeners ---
         aiEngineSelectorBtn.addEventListener('click', (e) => {
-            e.stopPropagation(); // Prevent click from bubbling to document, which would close it immediately
-            toggleDropdown(addOnsDropdown, addOnsCaret, true); // Force close other dropdown
-            toggleDropdown(aiEngineDropdown, aiEngineCaret); // Toggle current dropdown
+            e.stopPropagation();
+            toggleDropdown(addOnsDropdown, addOnsCaret, true);
+            toggleDropdown(aiEngineDropdown, aiEngineCaret);
         });
         addOnsBtn.addEventListener('click', (e) => {
-            e.stopPropagation(); // Prevent click from bubbling to document
-            toggleDropdown(aiEngineDropdown, aiEngineCaret, true); // Force close other dropdown
-            toggleDropdown(addOnsDropdown, addOnsCaret); // Toggle current dropdown
+            e.stopPropagation();
+            toggleDropdown(aiEngineDropdown, aiEngineCaret, true);
+            toggleDropdown(addOnsDropdown, addOnsCaret);
         });
-
-        // Close dropdowns if clicked outside
         document.addEventListener('click', (event) => {
-            // Check if AI Engine dropdown is open and click is outside
-            if (!aiEngineDropdown.classList.contains('hidden') && 
-                !aiEngineSelectorBtn.contains(event.target) && 
-                !aiEngineDropdown.contains(event.target)) {
-                toggleDropdown(aiEngineDropdown, aiEngineCaret, true); // Force close
+            if (!aiEngineDropdown.classList.contains('hidden') && !aiEngineSelectorBtn.contains(event.target) && !aiEngineDropdown.contains(event.target)) {
+                toggleDropdown(aiEngineDropdown, aiEngineCaret, true);
             }
-            // Check if Add-ons dropdown is open and click is outside
-            if (!addOnsDropdown.classList.contains('hidden') && 
-                !addOnsBtn.contains(event.target) && 
-                !addOnsDropdown.contains(event.target)) {
-                toggleDropdown(addOnsDropdown, addOnsCaret, true); // Force close
+            if (!addOnsDropdown.classList.contains('hidden') && !addOnsBtn.contains(event.target) && !addOnsDropdown.contains(event.target)) {
+                toggleDropdown(addOnsDropdown, addOnsCaret, true);
             }
         });
-
-
         aiModelTabs.forEach(tab => {
             tab.addEventListener('click', () => {
                 aiModelTabs.forEach(t => t.classList.remove('tab-active'));
@@ -585,7 +558,6 @@
                 }
             });
         });
-
         resetAddOnsBtn.addEventListener('click', () => {
             previewToggle.checked = false;
             diversifyOptimizationEl.value = 1;
@@ -603,7 +575,7 @@
             if (selectedAiEngines.size === 0) {
                 showMessage('Please select at least one AI engine.');
                 if (aiEngineDropdown.classList.contains('hidden')) {
-                    toggleDropdown(aiEngineDropdown, aiEngineCaret); // Open it if closed
+                    toggleDropdown(aiEngineDropdown, aiEngineCaret);
                 }
                 aiEngineSelectorBtn.classList.add('ring-2', 'ring-red-500');
                 setTimeout(() => aiEngineSelectorBtn.classList.remove('ring-2', 'ring-red-500'), 2000);
@@ -618,114 +590,55 @@
             const numVariationsTotal = parseInt(diversifyOptimizationEl.value) || 1;
             const language = optimizedLanguageEl.value;
             
-            const apiKey = "AIzaSyBUeakcTtKZLMqhDcjDU2q-LDKZnGln--w"; // This will be an empty string. Canvas provides it at runtime.
-            // DO NOT add API key validation here.
+            // Define the Netlify function endpoint
+            const netlifyFunctionUrl = '/.netlify/functions/enhance-prompt'; // Adjust if you use a redirect (e.g., /api/enhance-prompt)
 
             for (const engineId of selectedAiEngines) {
                 const engineDetails = [...aiModels.text, ...aiModels.image].find(m => m.id === engineId);
                 if (!engineDetails) continue;
 
-                const isImageModel = aiModels.image.some(m => m.id === engineId);
-                let currentApiUrl;
-                let payload;
-                let method = 'POST'; // Default method
-
-                // Construct the API prompt for Gemini (used for enhancing prompts for text models, or for image models if not imagen-3.0-generate)
-                let apiUserPromptForEnhancement = `You are a Prompt Refinement Specialist. Your primary task is to take a user's original prompt and meticulously transform it into an optimized version. Your goal is to rephrase, refine, and enhance the original prompt while strictly preserving its core intent and subject matter.
-Original user prompt: "${originalPrompt}"
-Targeting AI model: ${engineDetails.name} (${isImageModel ? 'Image' : 'Text'} Generation)
-Desired language for the optimized prompt: ${language}.
-Refinement Guidelines:
-- ${isImageModel ? "For image generation, focus on incorporating rich visual descriptors, specifying artistic style (e.g., photorealistic, cartoonish, watercolor), composition, lighting, color palette, and mood. Ensure the core subject is clear and the prompt is structured as a coherent descriptive narrative, not just a list of keywords." : "For text generation, focus on improving clarity, specifying desired tone or style if applicable, and adding pertinent detail without losing the original intent. Avoid merely fragmenting the prompt; instead, build upon its core idea to make it robust."}
-The final output should ONLY be the optimized prompt itself, without any additional commentary, intro, or concluding remarks.`;
-                
-                if (numVariationsTotal > 1) {
-                    apiUserPromptForEnhancement += `\n\nThis is variation ${j + 1} of ${numVariationsTotal} requested for ${engineDetails.name}. For this specific variation, attempt a distinct approach to the refinement based on the following emphasis (if applicable):\n`;
-                    // Variation specific instructions can be added here if needed for each j
-                }
-
-
-                if (isImageModel && engineId === 'imagen-3.0-generate') {
-                    // For Imagen, we use the original prompt directly to generate an image.
-                    // The "enhancement" in this context is providing the prompt that would be used.
-                    // No separate Gemini call to enhance the prompt *for* Imagen in this simplified loop.
-                    // If prompt enhancement *before* sending to Imagen is desired, that would be a separate Gemini call.
-                    currentApiUrl = `https://generativelanguage.googleapis.com/v1beta/models/imagen-3.0-generate-002:predict?key=${apiKey}`;
-                    payload = { instances: [{ prompt: originalPrompt }], parameters: { "sampleCount": 1 } };
-                } else {
-                    // For text models, or if we wanted to enhance a prompt *for* a generic image model using Gemini
-                    currentApiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
-                    payload = { contents: [{ role: "user", parts: [{ text: apiUserPromptForEnhancement }] }] };
-                }
-
-
                 for (let j = 0; j < numVariationsTotal; j++) {
-                    // If numVariationsTotal > 1 and not Imagen, slightly adjust apiUserPromptForEnhancement for each j
-                    if (numVariationsTotal > 1 && !(isImageModel && engineId === 'imagen-3.0-generate')) {
-                        let tempApiUserPrompt = apiUserPromptForEnhancement; // Start with base
-                        if (j === 0) tempApiUserPrompt += "\n- Variation Emphasis: Maximum clarity and directness.\n";
-                        else if (j === 1) tempApiUserPrompt += "\n- Variation Emphasis: A more creative or evocative style.\n";
-                        else tempApiUserPrompt += `\n- Variation Emphasis: Explore an alternative angle for enhancement (Variation ${j+1}).\n`;
-                        tempApiUserPrompt += "Remember, the output should still be ONLY the optimized prompt.";
-                        payload = { contents: [{ role: "user", parts: [{ text: tempApiUserPrompt }] }] };
-                    } else if (isImageModel && engineId === 'imagen-3.0-generate' && numVariationsTotal > 1) {
-                        // For Imagen, if multiple "variations" are requested, it means generating multiple images from the same prompt.
-                        // The prompt itself doesn't change per variation in this direct-to-Imagen path.
-                        // The payload for Imagen's sampleCount handles multiple image generations from one prompt.
-                        // Here, we'll just log the same original prompt multiple times as "enhanced" for consistency in `currentResults`.
-                    }
-
+                    const requestPayload = {
+                        originalPrompt: originalPrompt,
+                        engineId: engineId, // Send engineId so proxy knows the target
+                        engineName: engineDetails.name,
+                        engineType: aiModels.text.some(m => m.id === engineId) ? 'text' : 'image',
+                        language: language,
+                        variationCount: j + 1, // Current variation number
+                        totalVariations: numVariationsTotal // Total variations requested for this engine
+                        // Add any other options from addOnsDropdown your proxy might need
+                    };
 
                     try {
-                        const response = await fetch(currentApiUrl, {
-                            method: method, // 'POST'
+                        const response = await fetch(netlifyFunctionUrl, {
+                            method: 'POST',
                             headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify(payload)
+                            body: JSON.stringify(requestPayload)
                         });
-                        const result = await response.json();
-                        
-                        let enhancedText;
-                        if (isImageModel && engineId === 'imagen-3.0-generate') {
-                            // For Imagen, the "enhanced prompt" is the original prompt.
-                            // We are not displaying the image, just confirming the prompt used.
-                            if (result.predictions && result.predictions.length > 0 && result.predictions[0].bytesBase64Encoded) {
-                                enhancedText = originalPrompt + ` (Note: This prompt was used for ${engineDetails.name} image generation. Actual image not displayed.)`;
-                            } else {
-                                enhancedText = `Error: ${engineDetails.name} did not return expected image data. ${result.error ? result.error.message : JSON.stringify(result)}`;
-                                console.error(`${engineDetails.name} API Error:`, result);
-                            }
-                        } else { // Text model (Gemini Flash for enhancement)
-                            if (result.candidates && result.candidates.length > 0 &&
-                                result.candidates[0].content && result.candidates[0].content.parts &&
-                                result.candidates[0].content.parts.length > 0) {
-                                enhancedText = result.candidates[0].content.parts[0].text.trim();
-                                // Remove any leading/trailing "Enhanced Prompt:" or similar, as the Gemini prompt asks for ONLY the prompt.
-                                enhancedText = enhancedText.replace(/^Enhanced Prompt:\s*/i, '').trim();
-                            } else if (result.error) {
-                                enhancedText = `API Error for ${engineDetails.name}: ${result.error.message}`;
-                                console.error(`Gemini API Error for ${engineDetails.name} (Var ${j+1}):`, result.error);
-                            } else {
-                                enhancedText = `Error: Invalid response structure from enhancement API for ${engineDetails.name}.`;
-                                console.error(`Invalid Gemini response for ${engineDetails.name} (Var ${j+1}):`, result);
-                            }
-                        }
 
+                        if (!response.ok) {
+                            const errorData = await response.json().catch(() => ({ error: "Failed to parse error response from proxy." }));
+                            throw new Error(errorData.error || `Proxy request failed with status ${response.status}`);
+                        }
+                        
+                        const resultData = await response.json(); // Expecting { enhancedPrompt: "...", engineName: "...", isError: false/true, errorMessage: "..." }
+                        
                         currentResults.push({
                             original: originalPrompt,
-                            enhanced: enhancedText,
+                            enhanced: resultData.enhancedPrompt || "Error: No enhanced prompt received.",
                             engineId: engineId,
-                            engineName: engineDetails.name,
+                            engineName: resultData.engineName || engineDetails.name, // Use engineName from proxy if provided
                             variation: j + 1,
                             totalVariationsForEngine: numVariationsTotal,
-                            isError: enhancedText.startsWith("Error:") || enhancedText.startsWith("API Error:")
+                            isError: resultData.isError || (resultData.enhancedPrompt ? false : true)
                         });
 
                     } catch (error) {
-                        console.error(`Network/Fetch Error for ${engineDetails.name} (Var ${j+1}):`, error);
-                        showMessage(`Network error for ${engineDetails.name}.`);
+                        console.error(`Error calling Netlify function for ${engineDetails.name} (Var ${j+1}):`, error);
+                        showMessage(`Error: ${error.message}`);
                         currentResults.push({
                             original: originalPrompt,
-                            enhanced: `Error: Network or client-side issue for ${engineDetails.name}. ${error.message}`,
+                            enhanced: `Error communicating with enhancement service: ${error.message}`,
                             engineId: engineId,
                             engineName: engineDetails.name,
                             variation: j + 1,
@@ -740,7 +653,7 @@ The final output should ONLY be the optimized prompt itself, without any additio
             enhanceBtnText.textContent = 'Enhance Prompt';
             enhanceBtn.disabled = false;
             renderResults();
-            if (currentResults.some(r => !r.isError)) {
+            if (currentResults.some(r => !r.isError && r.enhanced && !r.enhanced.startsWith("Error:"))) {
                  showMessage('Prompts processed/enhanced!');
             } else {
                  showMessage('Failed to process/enhance all prompts. Check console.');
@@ -757,3 +670,18 @@ The final output should ONLY be the optimized prompt itself, without any additio
     </script>
 </body>
 </html>
+```
+
+**Key changes in the `enhanceBtn` function:**
+
+1.  **`netlifyFunctionUrl`:** A variable `netlifyFunctionUrl` is defined (e.g., `/.netlify/functions/enhance-prompt`). You'll need to make sure this path matches how you set up your function and any Netlify redirects.
+2.  **No Direct API Key Usage:** All references to `apiKey` and direct Gemini API URLs have been removed from this client-side code.
+3.  **`fetch` Call Modified:**
+    * The `fetch` now calls `netlifyFunctionUrl`.
+    * It uses the `POST` method.
+    * The `body` is a JSON string containing `originalPrompt` and other relevant details like `engineId`, `engineName`, `engineType`, `language`, and variation info. Your serverless function will use this information to make the appropriate call to the Gemini API.
+4.  **Response Handling:**
+    * The code now expects a JSON response from your Netlify function. I've assumed your function might return an object like `{ enhancedPrompt: "...", engineName: "...", isError: false, errorMessage: "..." }`. You'll need to ensure your serverless function returns data in a structure that this client-side code can parse correctly to populate `currentResults`.
+5.  **Error Handling:** Basic error handling for the `fetch` call to your Netlify function is included.
+
+Remember, this update only covers the **client-side** part. You still need to create the actual `enhance-prompt.js` serverless function in your Netlify project, add your `GEMINI_API_KEY` as an environment variable in Netlify's UI, and ensure that function correctly processes the incoming request and calls the Gemini A
